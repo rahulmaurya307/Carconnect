@@ -1,0 +1,13 @@
+# Uncomment the next line to define a global platform for your project
+platform :ios, '9.0'
+
+target 'CarConnect' do
+  use_frameworks!
+
+  	pod 'Alamofire', '~> 4.0’
+	pod 'SwiftyJSON', :git => 'https://github.com/SwiftyJSON/SwiftyJSON.git'
+	pod 'AlamofireImage'
+	pod 'Toast-Swift', '~> 2.0.0’
+	pod 'PayUmoney_PnP'
+	pod 'Kingfisher', '~> 4.0'
+end

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13526" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13524"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <array key="HelveticaNeue.ttc">
+            <string>HelveticaNeue-Medium</string>
+        </array>
+    </customFonts>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" rowHeight="240" id="KGk-i7-Jjw" customClass="RoadSideAssistanceTableViewCell" customModule="CarConnect" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="240"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="320" height="240"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dF7-BB-I1y" customClass="CardView" customModule="CarConnect" customModuleProvider="target">
+                        <rect key="frame" x="5" y="4" width="310" height="225"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="rLc-jc-Vtg" customClass="CardView" customModule="CarConnect" customModuleProvider="target">
+                                <rect key="frame" x="188" y="191" width="100" height="28"/>
+                                <color key="backgroundColor" red="0.87272077798843384" green="0.10915518552064896" blue="0.13765662908554077" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                        <real key="value" value="5"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="shadowOffsetWidth">
+                                        <integer key="value" value="0"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="shadowColor">
+                                        <color key="value" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="shadowOffsetHeight">
+                                        <integer key="value" value="0"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
+                            </view>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ic_roadside" translatesAutoresizingMaskIntoConstraints="NO" id="VJC-Co-vC7">
+                                <rect key="frame" x="5" y="5" width="300" height="180"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="180" id="AeH-dR-Jsc"/>
+                                </constraints>
+                            </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8kZ-qQ-3kf">
+                                <rect key="frame" x="188" y="191" width="100" height="28"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="100" id="ai7-6b-Toh"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                <state key="normal" title="Tab For Call">
+                                    <color key="titleColor" red="0.99990516900000004" green="1" blue="0.99987047910000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                </state>
+                                <connections>
+                                    <action selector="btnTabForCall:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="TqO-dL-0kq"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DWU-FV-B9i">
+                                <rect key="frame" x="19" y="196" width="39" height="18"/>
+                                <fontDescription key="fontDescription" name="HelveticaNeue-Medium" family="Helvetica Neue" pointSize="15"/>
+                                <color key="textColor" red="0.25095126295336789" green="0.25095126295336789" blue="0.25095126295336789" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="VJC-Co-vC7" firstAttribute="leading" secondItem="dF7-BB-I1y" secondAttribute="leading" constant="5" id="4a1-eo-r3O"/>
+                            <constraint firstItem="8kZ-qQ-3kf" firstAttribute="top" secondItem="VJC-Co-vC7" secondAttribute="bottom" constant="6" id="Cek-TK-aQ1"/>
+                            <constraint firstItem="rLc-jc-Vtg" firstAttribute="leading" secondItem="8kZ-qQ-3kf" secondAttribute="leading" id="EL3-N9-hYv"/>
+                            <constraint firstItem="DWU-FV-B9i" firstAttribute="leading" secondItem="dF7-BB-I1y" secondAttribute="leadingMargin" constant="11" id="IZI-ea-XCY"/>
+                            <constraint firstItem="rLc-jc-Vtg" firstAttribute="top" secondItem="8kZ-qQ-3kf" secondAttribute="top" id="LmJ-rg-Ou8"/>
+                            <constraint firstAttribute="height" constant="225" id="VI7-8M-uxT"/>
+                            <constraint firstItem="VJC-Co-vC7" firstAttribute="top" secondItem="dF7-BB-I1y" secondAttribute="top" constant="5" id="XNN-we-HMH"/>
+                            <constraint firstItem="rLc-jc-Vtg" firstAttribute="trailing" secondItem="8kZ-qQ-3kf" secondAttribute="trailing" id="YOx-Tc-gxn"/>
+                            <constraint firstAttribute="trailing" secondItem="8kZ-qQ-3kf" secondAttribute="trailing" constant="22" id="cRX-h5-Wim"/>
+                            <constraint firstItem="rLc-jc-Vtg" firstAttribute="bottom" secondItem="8kZ-qQ-3kf" secondAttribute="bottom" id="s45-Ns-6XQ"/>
+                            <constraint firstItem="DWU-FV-B9i" firstAttribute="top" secondItem="VJC-Co-vC7" secondAttribute="bottom" constant="11" id="uF6-pI-XYx"/>
+                            <constraint firstAttribute="trailing" secondItem="VJC-Co-vC7" secondAttribute="trailing" constant="5" id="yxb-HI-2J8"/>
+                        </constraints>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                <real key="value" value="5"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="number" keyPath="shadowOffsetWidth">
+                                <integer key="value" value="0"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="color" keyPath="shadowColor">
+                                <color key="value" red="0.40677623056994816" green="0.40677623056994816" blue="0.40677623056994816" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="number" keyPath="shadowOffsetHeight">
+                                <integer key="value" value="0"/>
+                            </userDefinedRuntimeAttribute>
+                        </userDefinedRuntimeAttributes>
+                    </view>
+                </subviews>
+                <color key="backgroundColor" red="0.81942363878808289" green="0.81942363878808289" blue="0.81942363878808289" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                <constraints>
+                    <constraint firstAttribute="trailing" secondItem="dF7-BB-I1y" secondAttribute="trailing" constant="5" id="1mq-cP-gSJ"/>
+                    <constraint firstItem="dF7-BB-I1y" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="4" id="7HI-h1-GC0"/>
+                    <constraint firstItem="dF7-BB-I1y" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="5" id="qII-Ig-iPJ"/>
+                </constraints>
+            </tableViewCellContentView>
+            <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
+            <connections>
+                <outlet property="ImageViewRoadassCell" destination="VJC-Co-vC7" id="Fmm-xR-faX"/>
+                <outlet property="RoadLbl" destination="DWU-FV-B9i" id="XJZ-Da-C6c"/>
+            </connections>
+            <point key="canvasLocation" x="26" y="150"/>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <image name="ic_roadside" width="760" height="245"/>
+    </resources>
+</document>

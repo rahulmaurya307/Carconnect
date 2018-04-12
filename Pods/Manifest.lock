@@ -1,0 +1,43 @@
+PODS:
+  - Alamofire (4.6.0)
+  - AlamofireImage (3.3.0):
+    - Alamofire (~> 4.5)
+  - CitrusGraphics (2.0.0)
+  - Kingfisher (4.6.1)
+  - PayUmoney_CoreSDK (3.0)
+  - PayUmoney_PnP (2.0):
+    - CitrusGraphics
+    - PayUmoney_CoreSDK
+  - SwiftyJSON (4.0.0)
+  - Toast-Swift (2.0.0)
+
+DEPENDENCIES:
+  - Alamofire (~> 4.0)
+  - AlamofireImage
+  - Kingfisher (~> 4.0)
+  - PayUmoney_PnP
+  - SwiftyJSON (from `https://github.com/SwiftyJSON/SwiftyJSON.git`)
+  - Toast-Swift (~> 2.0.0)
+
+EXTERNAL SOURCES:
+  SwiftyJSON:
+    :git: https://github.com/SwiftyJSON/SwiftyJSON.git
+
+CHECKOUT OPTIONS:
+  SwiftyJSON:
+    :commit: fb67763f27990ba76a42bf412f848af5aef5e5ea
+    :git: https://github.com/SwiftyJSON/SwiftyJSON.git
+
+SPEC CHECKSUMS:
+  Alamofire: f41a599bd63041760b26d393ec1069d9d7b917f4
+  AlamofireImage: 2e784dc5d00f04903a52c1d169181469c805c3df
+  CitrusGraphics: 99a20691ab62595796b26dcc64646c12abbd962c
+  Kingfisher: 1f9157d9c02b380cbd0b7cc890161195164eb634
+  PayUmoney_CoreSDK: 66341cb1f259708bc45cda0c4f1016a970c1d227
+  PayUmoney_PnP: 97598a262b25024950eb2a72df48fc6151429ea2
+  SwiftyJSON: 8cd73b154950360d79292a8dc8c0d0a85d258930
+  Toast-Swift: 5b2f8f720f7e78e48511f693df1f9c9a6e38a25a
+
+PODFILE CHECKSUM: 39ffdba63b3a446f721ed59b84b6407465ad3b16
+
+COCOAPODS: 1.3.1

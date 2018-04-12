@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" id="KGk-i7-Jjw" customClass="CouponCell" customModule="CarConnect" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="200"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="320" height="199.5"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="myBackImg.png" translatesAutoresizingMaskIntoConstraints="NO" id="shh-a9-uv5">
+                        <rect key="frame" x="16" y="11" width="288" height="174"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="174" id="82P-HB-Tnw"/>
+                        </constraints>
+                    </imageView>
+                    <view alpha="0.65000000000000002" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="C60-XJ-SFd">
+                        <rect key="frame" x="16" y="11" width="288" height="174"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Coupon Code" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DZX-kc-5kp">
+                                <rect key="frame" x="8" y="77" width="94.5" height="18"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yyg-kP-iHK">
+                                <rect key="frame" x="8" y="30" width="270" height="18"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="right" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oFJ-lU-Tqn">
+                                <rect key="frame" x="10" y="130" width="250" height="18"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstAttribute="bottom" secondItem="oFJ-lU-Tqn" secondAttribute="bottom" constant="26" id="3jx-tx-DXm"/>
+                            <constraint firstItem="DZX-kc-5kp" firstAttribute="top" secondItem="yyg-kP-iHK" secondAttribute="bottom" constant="29" id="87V-rh-pY1"/>
+                            <constraint firstItem="yyg-kP-iHK" firstAttribute="leading" secondItem="C60-XJ-SFd" secondAttribute="leadingMargin" id="9r6-8s-QwX"/>
+                            <constraint firstItem="DZX-kc-5kp" firstAttribute="leading" secondItem="C60-XJ-SFd" secondAttribute="leadingMargin" id="Ica-pm-Jzt"/>
+                            <constraint firstItem="yyg-kP-iHK" firstAttribute="top" secondItem="C60-XJ-SFd" secondAttribute="topMargin" constant="22" id="bMU-pn-oaC"/>
+                            <constraint firstItem="oFJ-lU-Tqn" firstAttribute="leading" secondItem="C60-XJ-SFd" secondAttribute="leading" constant="10" id="eBC-3H-yXZ"/>
+                            <constraint firstAttribute="trailing" secondItem="yyg-kP-iHK" secondAttribute="trailing" constant="10" id="gxt-8y-d0J"/>
+                            <constraint firstAttribute="trailing" secondItem="oFJ-lU-Tqn" secondAttribute="trailing" constant="28" id="wOG-sx-Z4O"/>
+                        </constraints>
+                    </view>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="hxY-2Q-Ddo" customClass="CardView" customModule="CarConnect" customModuleProvider="target">
+                        <rect key="frame" x="150" y="81" width="128" height="32"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Tje-6B-y4i">
+                                <rect key="frame" x="46" y="7" width="37.5" height="18"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="128" id="NMN-ei-NUE"/>
+                            <constraint firstAttribute="height" constant="32" id="QkT-DK-V71"/>
+                            <constraint firstItem="Tje-6B-y4i" firstAttribute="centerY" secondItem="hxY-2Q-Ddo" secondAttribute="centerY" id="aHZ-R3-VCH"/>
+                            <constraint firstItem="Tje-6B-y4i" firstAttribute="centerX" secondItem="hxY-2Q-Ddo" secondAttribute="centerX" id="cjk-59-rgC"/>
+                        </constraints>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                <real key="value" value="8"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="number" keyPath="shadowOpacity">
+                                <real key="value" value="0.0"/>
+                            </userDefinedRuntimeAttribute>
+                        </userDefinedRuntimeAttributes>
+                    </view>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="oFJ-lU-Tqn" firstAttribute="top" secondItem="hxY-2Q-Ddo" secondAttribute="bottom" constant="28" id="2oQ-SD-dMh"/>
+                    <constraint firstItem="hxY-2Q-Ddo" firstAttribute="centerY" secondItem="DZX-kc-5kp" secondAttribute="centerY" id="5kX-o5-dDa"/>
+                    <constraint firstItem="C60-XJ-SFd" firstAttribute="leading" secondItem="shh-a9-uv5" secondAttribute="leading" id="JYa-Kq-upm"/>
+                    <constraint firstItem="C60-XJ-SFd" firstAttribute="bottom" secondItem="shh-a9-uv5" secondAttribute="bottom" id="MfL-MM-356"/>
+                    <constraint firstAttribute="trailingMargin" secondItem="hxY-2Q-Ddo" secondAttribute="trailing" constant="26" id="TjF-7S-5D2"/>
+                    <constraint firstItem="C60-XJ-SFd" firstAttribute="top" secondItem="shh-a9-uv5" secondAttribute="top" id="YTl-kn-wIY"/>
+                    <constraint firstItem="C60-XJ-SFd" firstAttribute="trailing" secondItem="shh-a9-uv5" secondAttribute="trailing" id="dlZ-1q-iz3"/>
+                    <constraint firstItem="shh-a9-uv5" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" id="fZS-8T-wdv"/>
+                    <constraint firstItem="shh-a9-uv5" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" id="jtn-U9-HDv"/>
+                    <constraint firstItem="shh-a9-uv5" firstAttribute="trailing" secondItem="H2p-sc-9uM" secondAttribute="trailingMargin" id="wGu-u1-up2"/>
+                </constraints>
+            </tableViewCellContentView>
+            <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
+            <connections>
+                <outlet property="lblCouponCode" destination="Tje-6B-y4i" id="0pl-s2-TjJ"/>
+                <outlet property="lblCouponName" destination="yyg-kP-iHK" id="nt4-Yt-Ikg"/>
+                <outlet property="lblExpirydate" destination="oFJ-lU-Tqn" id="Yg4-AM-UFx"/>
+            </connections>
+        </tableViewCell>
+    </objects>
+    <resources>
+        <image name="myBackImg.png" width="375" height="237"/>
+    </resources>
+</document>
