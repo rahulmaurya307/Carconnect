@@ -5,12 +5,13 @@ import Alamofire
 import AlamofireImage
 import SwiftyJSON
 import Toast_Swift
-import GooglePlaces
+
 
 class MyCarsDetailViewController: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource,
 UINavigationControllerDelegate,UIActionSheetDelegate, UIImagePickerControllerDelegate, UITextFieldDelegate{
     
     var datePicker : UIDatePicker = UIDatePicker()
+    var locationList : [LocationModel] = [LocationModel]()
     var brandName : String!
     var modelName : String!
     var varientNAme : String!
@@ -25,11 +26,12 @@ UINavigationControllerDelegate,UIActionSheetDelegate, UIImagePickerControllerDel
     var colorPickerType : Bool!
     var ownerPickerType : Bool!
     var carOwnerList = ["First", "Second", "Third", "Forth"]
+    var selectCity = [String?]()
+    var selectState = [String?]()
     
 
     
 @IBOutlet var SegmentCarDetail: UISegmentedControl!
-    var resultsViewController: GMSAutocompleteResultsViewController?
     var searchController: UISearchController?
     
     
@@ -61,7 +63,7 @@ UINavigationControllerDelegate,UIActionSheetDelegate, UIImagePickerControllerDel
     @IBOutlet var txtFldExpectedPrice: UITextField!
     @IBOutlet var txtFldColor: UITextField!
     @IBOutlet var txtFldOwner: UITextField!
-    @IBOutlet var txtvwSellerComment: UITextView!
+    @IBOutlet var txtvwSellerComment: UITextField!
     var colorList : [ColorModel] = [ColorModel]()
     var colorArray = [String]()
 
@@ -73,9 +75,17 @@ UINavigationControllerDelegate,UIActionSheetDelegate, UIImagePickerControllerDel
     let pickerServiceType = UIPickerView()
     let pickerColor = UIPickerView()
     let pickerOwner = UIPickerView()
+    let cityBook = UIPickerView()
+    let cityInsurance = UIPickerView()
+    let citySell = UIPickerView()
    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        imgvwCam1.makeCircular()
+        imagevwCam2.makeCircular()
+        imagevwCam3.makeCircular()
+        getLocationList()
         
         txtFldServiceType.delegate = self
         textvwSelectCity.delegate = self
@@ -86,6 +96,7 @@ UINavigationControllerDelegate,UIActionSheetDelegate, UIImagePickerControllerDel
         txtFldExpectedPrice.delegate = self
         txtFldColor.delegate = self
         txtFldOwner.delegate = self
+        txtfldSelectCity.delegate = self
         
         ServiceData()
         colorListAction()
@@ -114,10 +125,22 @@ UINavigationControllerDelegate,UIActionSheetDelegate, UIImagePickerControllerDel
         
             pickerServiceType.delegate = self
             pickerServiceType.dataSource = self
+        
             pickerColor.delegate = self
             pickerColor.dataSource = self
+        
             pickerOwner.delegate = self
             pickerOwner.dataSource = self
+        
+            cityBook.delegate = self
+            cityBook.dataSource = self
+        
+            cityInsurance.delegate = self
+            cityInsurance.dataSource = self
+        
+            textvwSelectCity.inputView = pickerOwner
+            txtfldSelectCity.inputView = pickerOwner
+            txtFldState.inputView = pickerOwner
        
         doneButton()
       
@@ -133,6 +156,7 @@ UINavigationControllerDelegate,UIActionSheetDelegate, UIImagePickerControllerDel
         txtFldColor.resignFirstResponder()
         txtFldOwner.resignFirstResponder()
         txtvwSellerComment.resignFirstResponder()
+        txtfldSelectCity.resignFirstResponder()
         return true
     }
     
@@ -152,6 +176,15 @@ UINavigationControllerDelegate,UIActionSheetDelegate, UIImagePickerControllerDel
             val = 3
              doneButton()
             print("0 Val = \(val)")
+        }else if textField == textvwSelectCity {
+            val = 4
+            print("4 Val = \(val)")
+        }else if textField == txtfldSelectCity {
+            val = 5
+            print("5 Val = \(val)")
+        }else if textField == txtFldState {
+            val = 6
+            print("6 Val = \(val)")
         }
     }
     
@@ -208,7 +241,14 @@ UINavigationControllerDelegate,UIActionSheetDelegate, UIImagePickerControllerDel
         i = 3
     }
     @IBAction func btnSubmitSellCar(_ sender: Any) {
-        uploadImagesAndData()
+        if ((txtvwSellerComment.text?.count)! < 50){
+        let alert = UIAlertController(title: "Alert", message: "Comment Should be 50 Words", preferredStyle: UIAlertControllerStyle.alert)
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
+            
+        }else{//uploadImagesAndData()
+            uploadProfData()}
+        
     }
     
 /************************** Date Picker Start **************************/
@@ -271,7 +311,14 @@ public func numberOfComponents(in pickerView:  UIPickerView) -> Int  {
            return colorArray.count
         }else if (val == 2){
             return carOwnerList.count
+        }else if (val == 4){
+            return selectCity.count
+        }else if (val == 5){
+            return selectCity.count
+        }else if (val == 6){
+            return selectState.count
         }
+        
         return 0
     }
     
@@ -283,7 +330,14 @@ public func numberOfComponents(in pickerView:  UIPickerView) -> Int  {
              return colorArray[row]
         }else if (val == 2){
             return carOwnerList[row]
+        }else if (val == 4){
+            return selectCity[row]
+        }else if (val == 5){
+            return selectCity[row]
+        }else if (val == 6){
+            return selectState[row]
         }
+        
         return "nil"
     }
     
@@ -295,8 +349,18 @@ public func numberOfComponents(in pickerView:  UIPickerView) -> Int  {
         }else if (val == 2){
             txtFldOwner.text = carOwnerList[row]
         }
+        else if (val == 4){
+            textvwSelectCity.text = selectCity[row]
+        }
+        else if (val == 5){
+            txtfldSelectCity.text = selectCity[row]
+        }
+        else if (val == 6){
+            txtFldState.text = selectState[row]
+        }
     }
-    
+
+        
 func doneButton(){
     
     if (val == 3){
@@ -374,6 +438,7 @@ func doneButton(){
                 txtFldOwner.resignFirstResponder()
             }
     
+    
     func canclePicke1() {
         txtFldServiceType.resignFirstResponder()
     }
@@ -385,6 +450,7 @@ func doneButton(){
     }
 
     func ServiceData(){
+        self.view.makeToastActivity(.center)
         let token : String = UserDefaults.standard.string(forKey: "token")!
         
         // Parameters
@@ -398,6 +464,7 @@ func doneButton(){
             switch response.result {
                 
             case .success (let value):let json = JSON(value)
+            self.view.hideToastActivity()
             print("JSON: \(json)")
             let status = json["status"].stringValue
             if (status == WebUrl.SUCCESS_CODE){
@@ -419,6 +486,7 @@ func doneButton(){
                 
                 /***************** Network Error *****************/
             case .failure (let error):
+                self.view.hideToastActivity()
                 self.view.makeToast("Network Error")
             }
         }
@@ -427,6 +495,7 @@ func doneButton(){
     
 /************** Book Service **********************/
     func bookServiceAction(){
+        self.view.makeToastActivity(.center)
         let token : String = UserDefaults.standard.string(forKey: "token")!
         
         // Parameters
@@ -440,6 +509,7 @@ func doneButton(){
             switch response.result {
                 
             case .success (let value):let json = JSON(value)
+            self.view.hideToastActivity()
             print("JSON: \(json)")
             let status = json["status"].stringValue
             if (status == WebUrl.SUCCESS_CODE){
@@ -456,6 +526,7 @@ func doneButton(){
     
     /*************** Insurance Action ********************/
     func insuranceAction(){
+        self.view.makeToastActivity(.center)
         let token : String = UserDefaults.standard.string(forKey: "token")!
         
         // Parameters
@@ -471,6 +542,7 @@ func doneButton(){
             switch response.result {
                 
             case .success (let value):let json = JSON(value)
+            self.view.hideToastActivity()
             print("JSON: \(json)")
             let status = json["status"].stringValue
             if (status == WebUrl.SUCCESS_CODE){
@@ -480,6 +552,7 @@ func doneButton(){
                 
                 /***************** Network Error *****************/
             case .failure (let error):
+                self.view.hideToastActivity()
                 self.view.makeToast("Network Error")
             }
         }
@@ -489,6 +562,7 @@ func doneButton(){
     
     /*************** Insurance Action ********************/
     func colorListAction(){
+        self.view.makeToastActivity(.center)
         let token : String = UserDefaults.standard.string(forKey: "token")!
         
         // Parameters
@@ -504,6 +578,7 @@ func doneButton(){
             switch response.result {
                 
             case .success (let value):let json = JSON(value)
+            self.view.hideToastActivity()
             print("JSON: \(json)")
             let status = json["status"].stringValue
             if (status == WebUrl.SUCCESS_CODE){
@@ -526,61 +601,13 @@ func doneButton(){
         }
                 /***************** Network Error *****************/
             case .failure (let error):
+                self.view.hideToastActivity()
                 self.view.makeToast("Network Error")
             }
         }
     }
     
     
-    func uploadImagesAndData(){
-        let token : String = UserDefaults.standard.string(forKey: "token")!
-        let imageData1  = UIImageJPEGRepresentation(imgvwCam1.image!, 0.5)
-        let imageData2  = UIImageJPEGRepresentation(selectedImages!, 0.5)
-        let imageData3  = UIImageJPEGRepresentation(selectedImages!, 0.5)
-        
-        let params: [String: Any] = ["carId": carId, "kmsdriven":txtFldKmsDrive.text!, "state":txtFldState.text!, "price":txtFldExpectedPrice.text!,
-                                     "color":txtFldColor.text!, "owner":txtFldOwner.text!, "comment":txtvwSellerComment.text!]
-        
-        print(params)
-        
-        Alamofire.upload(multipartFormData: { multipartFormData in
-           
-            multipartFormData.append(imageData1!, withName: "vehicleImages[0]", mimeType: "image/jpeg")
-//            multipartFormData.append(imageData2, withName: "vehicleImages[1]", mimeType: "image/jpeg")
-//            multipartFormData.append(imageData3, withName: "vehicleImages[2]", mimeType: "image/jpeg")
-            
-            for (key, value) in params {
-                if let data = (value as AnyObject).data(using: String.Encoding.utf8.rawValue) {
-                    multipartFormData.append(data, withName: key)
-                    print(key)
-                    
-                }
-               
-            }
-            
-        },
-        to: WebUrl.CLASSIFIED_LIST_URL+"?token="+token, encodingCompletion: { encodingResult in
-                            switch encodingResult {
-                            case .success(let upload, _, _):
-                                upload
-                                    .validate()
-                                    .responseJSON { response in
-                                        switch response.result {
-                                        case .success(let value):
-                                            let json = JSON(value)
-                                            print("responseObject: \(json)")
-                                        case .failure(let responseError):
-                                            print("responseError: \(responseError)")
-                                        }
-                                }
-                            case .failure(let encodingError):
-                                print("encodingError: \(encodingError)")
-                            }
-        })
-    }
-    
-    func sendData(){
-    }
     
     func openCamSheet(){ 
         print("Action Sheet")
@@ -628,7 +655,6 @@ func doneButton(){
         }
     }
     
-    
     func imagePickerController(_ picker: UIImagePickerController,didFinishPickingMediaWithInfo info: [String : Any])
     {
         let chosenImage : UIImage = info[UIImagePickerControllerOriginalImage] as! UIImage //1
@@ -646,6 +672,146 @@ func doneButton(){
             selectedImages = chosenImage
         }
         dismiss(animated:true, completion: nil)
+    }
+    
+
+    /************************** Upload Image Start **************************/
+    func resizeImage(image: UIImage, targetSize: CGSize) -> UIImage {
+        let size = image.size
+        
+        let widthRatio  = targetSize.width  / size.width
+        let heightRatio = targetSize.height / size.height
+        
+        // Figure out what our orientation is, and use that to form the rectangle
+        var newSize: CGSize
+        if(widthRatio > heightRatio) {
+            newSize = CGSize(width: size.width * heightRatio, height: size.height * heightRatio)
+        } else {
+            newSize = CGSize(width: size.width * widthRatio,  height: size.height * widthRatio)
+        }
+        
+        // This is the rect that we've calculated out and this is what is actually used below
+        let rect = CGRect(x: 0, y: 0, width: newSize.width, height: newSize.height)
+        
+        // Actually do the resizing to the rect using the ImageContext stuff
+        UIGraphicsBeginImageContextWithOptions(newSize, false, 1.0)
+        image.draw(in: rect)
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        return newImage!
+    }
+    
+    
+    func uploadProfData(){
+        let token : String = UserDefaults.standard.string(forKey: "token")!
+        
+        let image0 : UIImage
+        image0 = resizeImage(image: imgvwCam1.image!, targetSize: CGSize(width: 400, height: 400))
+        let imgData0 = UIImageJPEGRepresentation(image0, 0.2)!
+        print("MyImage: \(image0.size)")
+        
+        let image1 : UIImage
+        image1 = resizeImage(image: imagevwCam2.image!, targetSize: CGSize(width: 400, height: 400))
+        let imgData1 = UIImageJPEGRepresentation(image1, 0.2)!
+        print("MyImage: \(image1.size)")
+        
+        let image2 : UIImage
+        image2 = resizeImage(image: imagevwCam3.image!, targetSize: CGSize(width: 400, height: 400))
+        let imgData2 = UIImageJPEGRepresentation(image2, 0.2)!
+        print("MyImage: \(image2.size)")
+        
+        let imagesData  = [imgData0,imgData1,imgData2]
+        //let imageParamName : [String?] =  ["images[0]","images[1]","images[2]"]
+        
+        let parameters : [String:Any]  = ["carId": carId, "kmsdriven":txtFldKmsDrive.text!, "state":txtFldState.text!, "price":txtFldExpectedPrice.text!,
+                                          "color":txtFldColor.text!, "owner":txtFldOwner.text!, "comment":txtvwSellerComment.text!]
+        
+        Alamofire.upload(multipartFormData: { multipartFormData in
+            // import image to request
+            for imageData in imagesData {
+                multipartFormData.append(imageData, withName: "vehicleImages[]", fileName: "\(Date().timeIntervalSince1970).jpeg", mimeType: "image/jpeg")
+            }
+            for (key, value) in parameters {
+                multipartFormData.append((value as AnyObject).data(using: String.Encoding.utf8.rawValue)!, withName: key)
+            }
+            
+        },
+                         to:WebUrl.CLASSIFIED_LIST_URL+"?token="+token)
+        { (result) in
+            switch result {
+            case .success(let upload, _, _):
+                
+                upload.uploadProgress(closure: { (progress) in
+                    print("Upload Progress: \(progress.fractionCompleted)")
+                    self.view.makeToast("Sucessfull Updated")
+                    
+                })
+                
+                upload.responseJSON { response in
+                    print(response.result.value)
+                    let alert = UIAlertController(title: "Alert", message: "Your Request Successfully Uploaded", preferredStyle: UIAlertControllerStyle.alert)
+                    alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+                    self.present(alert, animated: true, completion: nil)
+                    self.dismiss(animated: true, completion: nil)
+                }
+                
+                
+            case .failure(let encodingError):
+                print(encodingError)
+            }
+        }
+    }
+    /************************** Upload Image End **************************/
+    
+    func getLocationList(){
+        self.view.makeToastActivity(.center)
+        let token : String = UserDefaults.standard.string(forKey: "token")!
+        
+        // Parameters
+        let parameters: [String: Any] = ["":""]
+        
+        //Alamofire Request
+        Alamofire.request(WebUrl.LOCATION+"?token="+token, method: .post,parameters: parameters, encoding: JSONEncoding.default).validate().responseJSON { response in
+            // print("NewCarJsonResponse: \(response.result)")
+            
+            /*****************Response Success *****************/
+            switch response.result {
+            case .success (let value):let json = JSON(value)
+            self.view.hideToastActivity()
+            print("JSON: \(json)")
+            let status = json["status"].stringValue
+            if (status == WebUrl.SUCCESS_CODE){
+                let data = json["data"].array
+                
+                for i in data! {
+                    //let newCarList = i["newcarList"] as JSON // Read Json Object
+                    let locationList = i["locationList"].array
+                    
+                    for dataModel in locationList! {      // Parse Json Array
+                        let city = dataModel["city"].stringValue
+                        let state = dataModel["state"].stringValue
+                         let dealerName = dataModel["dealerName"].stringValue
+                        print("city : \(city)")
+                        print("state : \(state)")
+                        print("dealerName : \(dealerName)")
+                        
+                        self.selectCity.append(city)
+                        self.selectState.append(state)
+                        
+          self.locationList.append(LocationModel(dealerName: dealerName, city: city, state: state))
+                    }
+                }
+            }
+                /***************** Network Error *****************/
+            case .failure (let error):
+                self.view.hideToastActivity()
+                self.view.makeToast("Network Error")
+            }
+        }
+        
+        
+        
     }
 }
 

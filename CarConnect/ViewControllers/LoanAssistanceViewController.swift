@@ -134,6 +134,7 @@ class LoanAssistanceViewController: UIViewController, UITextFieldDelegate {
            
                 /***************** Network Error *****************/
             case .failure (let error):
+                self.view.hideToastActivity()
                 self.view.makeToast("Network Error")
             }
         }

@@ -15,6 +15,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate, UITableV
     var pointapplied : Int! = 0
     var paidamount : Int! = 0
     
+    @IBOutlet var cnstrntTableView: NSLayoutConstraint!
     @IBOutlet var myTableView: UITableView!
     @IBOutlet var lblTotalEarnedAmounts: UILabel!
     @IBOutlet var lblTotalPaidAmounts: UILabel!
@@ -25,6 +26,15 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate, UITableV
         super.viewDidLoad()
         getOrderDetail()
         lblOrderID.text = "Order ID : " + orderID
+    }
+    func UITableView_Auto_Height()
+    {
+        if(self.myTableView.contentSize.height < self.myTableView.frame.height){
+            cnstrntTableView.constant = self.myTableView.contentSize.height
+        }
+    }
+    override func viewDidAppear (_ animated: Bool) {
+        UITableView_Auto_Height();
     }
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
@@ -48,11 +58,12 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate, UITableV
         
     }
     
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
-    {
-        return 100;//Choose your custom row height
-    }
+    //func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
+  //  {
+  //      return 100;//Choose your custom row height
+   // }
     func getOrderDetail(){
+        self.view.makeToastActivity(.center)
         let token : String = UserDefaults.standard.string(forKey: "token")!
         let loyltyId : String = UserDefaults.standard.string(forKey: "loyaltyId")!
         
@@ -64,6 +75,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate, UITableV
             //Response Success
             switch response.result {
             case .success (let value):let json = JSON(value)
+            self.view.hideToastActivity()
             print("JSON: \(json)")
             let status = json["status"].stringValue
             if (status == WebUrl.SUCCESS_CODE){
@@ -121,6 +133,7 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate, UITableV
                 
                 /***************** Network Error *****************/
             case .failure (let error):
+                self.view.hideToastActivity()
                 self.view.makeToast("Network Error")
             }
         }

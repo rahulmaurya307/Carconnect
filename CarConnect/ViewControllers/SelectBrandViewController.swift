@@ -15,6 +15,7 @@ import Toast_Swift
 
 class SelectBrandViewController: UIViewController,UITableViewDelegate, UITableViewDataSource{
     
+    @IBOutlet var noItemView: UIView!
     var carName : String!
     var selectedMenuItem : Int = 0
     @IBOutlet var tableView2: UITableView!
@@ -24,21 +25,10 @@ class SelectBrandViewController: UIViewController,UITableViewDelegate, UITableVi
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("viewDidLoad")
         selectcar1()
         self.sideMenuController()?.sideMenu?.delegate = MySideMenu()
     }
-    override func viewWillAppear(_ animated: Bool) {
-              print("viewWillAppear")
-    }
     
-    override func viewDidAppear(_ animated: Bool) {
-        print("viewDidAppear")
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        print("viewWillDisappear")
-    }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
@@ -74,6 +64,7 @@ class SelectBrandViewController: UIViewController,UITableViewDelegate, UITableVi
     
 /**************************** Select Car 1 ******************************/
     func selectcar1(){
+        self.view.makeToastActivity(.center)
         
         let token : String = UserDefaults.standard.string(forKey: "token")!
         // Parameters
@@ -86,6 +77,7 @@ class SelectBrandViewController: UIViewController,UITableViewDelegate, UITableVi
             
             switch response.result {
             case .success (let value):let json = JSON(value)
+            self.view.hideToastActivity()
             print("JSON: \(json)")
             let status = json["status"].stringValue
             if (status == WebUrl.SUCCESS_CODE){
@@ -113,6 +105,7 @@ class SelectBrandViewController: UIViewController,UITableViewDelegate, UITableVi
                 
                 /***************** Network Error *****************/
             case .failure (let error):
+                self.view.hideToastActivity()
                 self.view.makeToast("Network Error")
             }
         }

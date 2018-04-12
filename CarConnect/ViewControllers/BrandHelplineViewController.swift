@@ -23,18 +23,47 @@ struct BrandHelpCellData {
 }
 
 class BrandHelplineViewController: UIViewController,UITableViewDelegate, UITableViewDataSource{
+    @IBOutlet var noItemView: UIView!
     
     var BrandHelplineList : [BrandHelpline] = [BrandHelpline]()
     var selectedMenuItem : Int = 0
     @IBOutlet var tableView2: UITableView!
     
     override func viewDidLoad() {
+        tableView2.backgroundView = noItemView
+        noItemView.isHidden = true
+        
         super.viewDidLoad()
         self.sideMenuController()?.sideMenu?.delegate = MySideMenu()
         getBrandHelplineList()
     }
     
+  
+    func noData(){
+        tableView2.separatorStyle = .none
+        if tableView2.visibleCells.isEmpty{
+            noItemView.isHidden = false
+        }else {
+            noItemView.isHidden = true
+            
+        }
+    }
+    
+   /* override func viewDidAppear(_ animated: Bool) {
+        if tableView2.visibleCells.isEmpty {
+            let noDataLabel: UILabel     = UILabel(frame: CGRect(x: 0, y: 0, width: tableView2.bounds.size.width, height: tableView2.bounds.size.height))
+            noDataLabel.text          = "No data available"
+            noDataLabel.textColor     = UIColor.black
+            noDataLabel.textAlignment = .center
+            tableView2.backgroundView  = noDataLabel
+            tableView2.separatorStyle  = .none
+            print("Yesssssss No Data")
+           
+        }
+    }*/
+    
     func getBrandHelplineList(){
+        self.view.makeToastActivity(.center)
         let token : String = UserDefaults.standard.string(forKey: "token")!
         
         // Parameters
@@ -47,6 +76,7 @@ class BrandHelplineViewController: UIViewController,UITableViewDelegate, UITable
 /*****************Response Success *****************/
             switch response.result {
             case .success (let value):let json = JSON(value)
+            self.view.hideToastActivity()
             print("JSON: \(json)")
             let status = json["status"].stringValue
             if (status == WebUrl.SUCCESS_CODE){
@@ -68,6 +98,7 @@ class BrandHelplineViewController: UIViewController,UITableViewDelegate, UITable
                     }
                     
                     self.tableView2.reloadData()
+                    self.noData()
                 }
             }
                 

@@ -23,6 +23,7 @@ struct CellData5 {
 
 class NewsViewController: UIViewController,UITableViewDelegate, UITableViewDataSource{
     
+    @IBOutlet var noItemView: UIView!
     
     var selectedMenuItem : Int = 0
     var newsList : [NewsStruct] = [NewsStruct]()
@@ -30,17 +31,27 @@ class NewsViewController: UIViewController,UITableViewDelegate, UITableViewDataS
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        tableView2.backgroundView = noItemView
+        noItemView.isHidden = true
         self.sideMenuController()?.sideMenu?.delegate = MySideMenu()
         getNewsList()
         print(UserDefaults.standard.string(forKey: "token"))
         
     }
+    
+   
+    func noData(){
+        if tableView2.visibleCells.isEmpty{
+            noItemView.isHidden = false
+            tableView2.separatorStyle = .none
+        }else {
+            noItemView.isHidden = true
+        }
+    }
    
     func getNewsList(){
-        
+        self.view.makeToastActivity(.center)
         let token : String = UserDefaults.standard.string(forKey: "token")!
-        
         
         // Parameters
         let parameters: [String: Any] = ["token":token]
@@ -52,6 +63,7 @@ class NewsViewController: UIViewController,UITableViewDelegate, UITableViewDataS
             /*****************Response Success *****************/
             switch response.result {
             case .success (let value):let json = JSON(value)
+            self.view.hideToastActivity()
             print("JSON: \(json)")
             let status = json["status"].stringValue
             if (status == WebUrl.SUCCESS_CODE){
@@ -80,11 +92,13 @@ class NewsViewController: UIViewController,UITableViewDelegate, UITableViewDataS
                     }
                     
                     self.tableView2.reloadData()
+                    self.noData()
                 }
                 }
                 
 /***************** Network Error *****************/
             case .failure (let error):
+                self.view.hideToastActivity()
                 self.view.makeToast("Network Error")
             }
         }
@@ -112,10 +126,10 @@ func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> 
         
     }
     
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
-    {
-        return 335;//Choose your custom row height
-    }
+//    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
+//    {
+//        return 335;//Choose your custom row height
+//    }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         

@@ -12,15 +12,18 @@ import SwiftyJSON
 import Toast_Swift
 
 class OTPViewController: UIViewController,UITextFieldDelegate {
-
+   
     
     var mobileNumber : String!
     var otp : Int!
+   
     var otpId : Int!
+   
     var flag : String!
     
     @IBOutlet var txtFieldEnterOTP : UITextField!
 
+  
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -44,6 +47,7 @@ class OTPViewController: UIViewController,UITextFieldDelegate {
     }
     
     @IBAction func ResendOtpBtn(_ sender: Any) {
+       
 
         resendOtpAction()
         
@@ -54,7 +58,9 @@ class OTPViewController: UIViewController,UITextFieldDelegate {
     }
     
     @IBAction func btnVerifyOTP(_ sender: Any) {
+     
         if (txtFieldEnterOTP.text?.isEmpty)!{
+        
             self.view.makeToast("Please Enter OTP")
         }
         else{
@@ -63,6 +69,7 @@ class OTPViewController: UIViewController,UITextFieldDelegate {
     }
 
     func generateOtp(){
+        self.view.makeToastActivity(.center)
         let parameters: [String: Any] = ["userMobile" : mobileNumber]
         
         //Alamofire Request
@@ -70,6 +77,7 @@ class OTPViewController: UIViewController,UITextFieldDelegate {
             
             switch response.result {
             case .success (let value):let json = JSON(value)
+            self.view.hideToastActivity()
             print("JSON: \(json)")
             let status = json["status"].stringValue
             let message = json["message"].stringValue
@@ -92,6 +100,7 @@ class OTPViewController: UIViewController,UITextFieldDelegate {
                 }
                 /***************** Network Error *****************/
             case .failure (let error):
+                self.view.hideToastActivity()
                 self.view.makeToast("Server Error")
                 
                 
@@ -101,6 +110,7 @@ class OTPViewController: UIViewController,UITextFieldDelegate {
     
     
     func VerifyOTP() {
+        self.view.makeToastActivity(.center)
         let parameters: [String: Any] = ["userMobile" : mobileNumber, "otpId" : otpId,
                                          "otp" : txtFieldEnterOTP.text]
         
@@ -109,6 +119,7 @@ class OTPViewController: UIViewController,UITextFieldDelegate {
             
             switch response.result {
             case .success (let value):let json = JSON(value)
+            self.view.hideToastActivity()
             print("JSON: \(json)")
             let status = json["status"].stringValue
             let message = json["message"].stringValue
@@ -116,16 +127,19 @@ class OTPViewController: UIViewController,UITextFieldDelegate {
 /*****************Response Success *****************/
             
             if (status == WebUrl.SUCCESS_CODE){
+  
                 let enterPassVC = self.storyboard?.instantiateViewController(withIdentifier: "EnterPasswordViewController") as! EnterPasswordViewController
                 enterPassVC.mobileNumber = self.mobileNumber
                 self.present(enterPassVC, animated: true, completion: nil)
                 
                 
             }else{
+            
                 self.view.makeToast(message)
                 }
 /***************** Network Error *****************/
             case .failure (let error):
+                self.view.hideToastActivity()
                 self.view.makeToast("Server Error")
                 
                 
@@ -138,6 +152,7 @@ class OTPViewController: UIViewController,UITextFieldDelegate {
     
     
     func resendOtpAction(){
+        self.view.makeToastActivity(.center)
         let parameters: [String: Any] = ["userMobile" : mobileNumber, "otpId" : otpId]
         
         //Alamofire Request
@@ -145,6 +160,7 @@ class OTPViewController: UIViewController,UITextFieldDelegate {
             
             switch response.result {
             case .success (let value):let json = JSON(value)
+            self.view.hideToastActivity()
             print("JSON: \(json)")
             let status = json["status"].stringValue
             let message = json["message"].stringValue
@@ -153,7 +169,6 @@ class OTPViewController: UIViewController,UITextFieldDelegate {
             
             if (status == WebUrl.SUCCESS_CODE){
                 var name : String!, email : String!, mobile : String!, userId : Int!, loyaltyId : String!
-                self.indicator.stopAnimating()
 
                 let data = json["data"].array
                 for i in data! {
@@ -169,7 +184,7 @@ class OTPViewController: UIViewController,UITextFieldDelegate {
                 }
                 /***************** Network Error *****************/
             case .failure (let error):
-                self.indicator.stopAnimating()
+                self.view.hideToastActivity()
                 self.view.makeToast("Server Error")
                 
                 

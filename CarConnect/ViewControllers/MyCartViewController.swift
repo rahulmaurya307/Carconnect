@@ -10,6 +10,7 @@ import Toast_Swift
 
 class MyCartViewController: UIViewController, UITableViewDataSource, CartDelegate{
     
+    @IBOutlet var noItemsView: UIView!
     func valueLable(update: String, cartId: String, quantity: String) {
         let loyltyId = UserDefaults.standard.string(forKey: "loyaltyId")!
         if(update == "delete"){
@@ -26,11 +27,23 @@ class MyCartViewController: UIViewController, UITableViewDataSource, CartDelegat
    
     override func viewDidLoad() {
         super.viewDidLoad()
+        myTableView.backgroundView = noItemsView
+        noItemsView.isHidden = true
         self.myTableView.rowHeight = 230.0
+         getMyCartList()
+    }
+    
+   
+    func noData(){
+        if myTableView.visibleCells.isEmpty{
+            noItemsView.isHidden = false
+        }else {
+            noItemsView.isHidden = true
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        getMyCartList()
+        //getMyCartList()
     }
     
     @IBAction func btnBack(_ sender: Any) {
@@ -51,6 +64,7 @@ class MyCartViewController: UIViewController, UITableViewDataSource, CartDelegat
     
 func getMyCartList()
     {
+    self.view.makeToastActivity(.center)
     let token : String = UserDefaults.standard.string(forKey: "token")!
     let loyaltyId : String = UserDefaults.standard.string(forKey: "loyaltyId")!
     
@@ -62,6 +76,7 @@ func getMyCartList()
         //Response Success
         switch response.result {
         case .success (let value):let json = JSON(value)
+        self.view.hideToastActivity()
         print("Track Referal JSON: \(json)")
         let status = json["status"].stringValue
         if (status == WebUrl.SUCCESS_CODE){
@@ -95,14 +110,10 @@ func getMyCartList()
                     var itemLeft = myInventory! - myProductSold!
                     let myImage = WebUrl.PRODUCT_IMAGE_URL + productImage
                     self.myCartList.append(MyCartModel(cartId: cartId, productId: productId, quantity: quantity, productName: productName, productState: productState, productImage: myImage, price: price, inventory: inventory, productSold: productSold, itemLeft: itemLeft))
-                
                 }
-                
             }
-            
-            
             self.myTableView.reloadData()
-            
+             self.noData()
         }
             
         //Network Error
@@ -113,6 +124,7 @@ func getMyCartList()
 }
     
     func updateCart(prductId : String!, loyltyId : String!, productQty : String!){
+        self.view.makeToastActivity(.center)
         let token : String = UserDefaults.standard.string(forKey: "token")!
         let loyaltyId : String = UserDefaults.standard.string(forKey: "loyaltyId")!
         
@@ -124,6 +136,7 @@ func getMyCartList()
             //Response Success
             switch response.result {
             case .success (let value):let json = JSON(value)
+            self.view.hideToastActivity()
             print("Track Referal JSON: \(json)")
             let status = json["status"].stringValue
             if (status == WebUrl.SUCCESS_CODE){
@@ -136,12 +149,14 @@ func getMyCartList()
                 
             //Network Error
             case .failure (let error):
+                self.view.hideToastActivity()
                 self.view.makeToast("Network Error")
             }
         }
     }
     
     func  deleteCart(cartId : String, loyltyId : String){
+        self.view.makeToastActivity(.center)
         let token : String = UserDefaults.standard.string(forKey: "token")!
         
         // Parameters
@@ -152,6 +167,7 @@ func getMyCartList()
             //Response Success
             switch response.result {
             case .success (let value):let json = JSON(value)
+            self.view.hideToastActivity()
             print("Track Referal JSON: \(json)")
             let status = json["status"].stringValue
             if (status == WebUrl.SUCCESS_CODE){
@@ -163,6 +179,7 @@ func getMyCartList()
                 
             //Network Error
             case .failure (let error):
+                self.view.hideToastActivity()
                 self.view.makeToast("Network Error")
             }
         }

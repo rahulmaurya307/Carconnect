@@ -17,6 +17,7 @@ struct CellDataSelectVarient {
 
 class SelectVarientViewController: UIViewController,UITableViewDelegate, UITableViewDataSource{
     
+    @IBOutlet var noItemView: UIView!
     var selectedMenuItem : Int = 0
     var arrayofcelldata2 = [CellDataSelectVarient]()
     var brandId : String!
@@ -98,18 +99,17 @@ class SelectVarientViewController: UIViewController,UITableViewDelegate, UITable
         comVC.flag = flag
         comVC.varientImage = selectCarList[indexPath.row].brandImage
         comVC.varientName = selectCarList[indexPath.row].brandName
-        self.present(comVC, animated: true, completion: nil)
+        AppDelegate.getDelegate().resetView2()
         
     }
 
-    
     @IBAction func backBtn (_ sender: UIBarButtonItem) {
         self.dismiss(animated: false, completion: nil)
     }
     
 /**************************** Select Car 2 ******************************/
     func selectVarient(){
-        
+        self.view.makeToastActivity(.center)
         let token : String = UserDefaults.standard.string(forKey: "token")!
         // Parameters
         let parameters: [String: Any] = ["brandId":brandId, "modelId":modelId]
@@ -123,6 +123,7 @@ class SelectVarientViewController: UIViewController,UITableViewDelegate, UITable
             
             switch response.result {
             case .success (let value):let json = JSON(value)
+            self.view.hideToastActivity()
             print("JSON: \(json)")
             let status = json["status"].stringValue
             if (status == WebUrl.SUCCESS_CODE){
@@ -144,6 +145,7 @@ class SelectVarientViewController: UIViewController,UITableViewDelegate, UITable
                 
                 /***************** Network Error *****************/
             case .failure (let error):
+                self.view.hideToastActivity()
                 self.view.makeToast("Network Error")
             }
         }

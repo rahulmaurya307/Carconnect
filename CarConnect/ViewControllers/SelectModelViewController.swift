@@ -15,6 +15,7 @@ struct CellDataSelectModel {
 
 
 class SelectModelViewController: UIViewController,UITableViewDelegate, UITableViewDataSource{
+    @IBOutlet var noItemView: UIView!
     
     var selectedMenuItem : Int = 0
     var arrayofcelldata2 = [CellDataSelectModel]()
@@ -71,7 +72,7 @@ class SelectModelViewController: UIViewController,UITableViewDelegate, UITableVi
     
 /**************************** Select Car 2 ******************************/
     func selectcar2(){
-        
+        self.view.makeToastActivity(.center)
         let token : String = UserDefaults.standard.string(forKey: "token")!
         // Parameters
         let parameters: [String: Any] = ["token":token, "brandId":brandId]
@@ -83,6 +84,7 @@ class SelectModelViewController: UIViewController,UITableViewDelegate, UITableVi
             
             switch response.result {
             case .success (let value):let json = JSON(value)
+            self.view.hideToastActivity()
             print("JSON: \(json)")
             let status = json["status"].stringValue
             if (status == WebUrl.SUCCESS_CODE){
@@ -100,6 +102,7 @@ class SelectModelViewController: UIViewController,UITableViewDelegate, UITableVi
                 
                 /***************** Network Error *****************/
             case .failure (let error):
+                self.view.hideToastActivity()
                 self.view.makeToast("Network Error")
             }
         }

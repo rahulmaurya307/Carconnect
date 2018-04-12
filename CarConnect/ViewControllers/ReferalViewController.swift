@@ -79,6 +79,7 @@ func borderColor(){
 
     ///////////*****************Function Start to Get Total Points *****************///////////
     func addRefer(){
+        self.view.makeToastActivity(.center)
         let loyaltyId : String = UserDefaults.standard.string(forKey: "loyaltyId")!
         let token : String = UserDefaults.standard.string(forKey: "token")!
         let referralName = txtFldRefName.text
@@ -96,6 +97,7 @@ func borderColor(){
 //Response Success
             switch response.result {
             case .success (let value):let json = JSON(value)
+            self.view.hideToastActivity()
             print("JSON: \(json)")
             let status = json["status"].stringValue
             if (status == WebUrl.SUCCESS_CODE){
@@ -104,6 +106,7 @@ func borderColor(){
             }
 //Network Error
             case .failure (let error):
+                self.view.hideToastActivity()
                 self.view.makeToast("Network Error")
             }
         }

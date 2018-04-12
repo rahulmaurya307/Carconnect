@@ -15,6 +15,7 @@ import AlamofireImage
 
 class NewCarsViewController: UIViewController,UITableViewDelegate, UITableViewDataSource{
     
+    @IBOutlet var noItemsView: UIView!
     var cardID : Int!
     
     var selectedMenuItem : Int = 0
@@ -23,12 +24,22 @@ class NewCarsViewController: UIViewController,UITableViewDelegate, UITableViewDa
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView2.backgroundView = noItemsView
+        noItemsView.isHidden = true
         getNewCarList()
         self.sideMenuController()?.sideMenu?.delegate = MySideMenu()
     }
+ 
+    func noData(){
+        if tableView2.visibleCells.isEmpty{
+            noItemsView.isHidden = false
+        }else {
+            noItemsView.isHidden = true
+        }
+    }
     
     func getNewCarList(){
-        
+        self.view.makeToastActivity(.center)
         let token : String = UserDefaults.standard.string(forKey: "token")!
 
         // Parameters
@@ -41,6 +52,7 @@ class NewCarsViewController: UIViewController,UITableViewDelegate, UITableViewDa
             /*****************Response Success *****************/
             switch response.result {
             case .success (let value):let json = JSON(value)
+            self.view.hideToastActivity()
             print("JSON: \(json)")
             let status = json["status"].stringValue
             if (status == WebUrl.SUCCESS_CODE){
@@ -62,11 +74,13 @@ class NewCarsViewController: UIViewController,UITableViewDelegate, UITableViewDa
                     }
 
                     self.tableView2.reloadData()
+                    self.noData()
 
                     }
                 }
                 /***************** Network Error *****************/
             case .failure (let error):
+                self.view.hideToastActivity()
                 self.view.makeToast("Network Error")
             }
         }
@@ -89,13 +103,13 @@ func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> U
     
                 cell2.MyCarCellLabel1.text = newCarList[indexPath.row].brandName+"( "+newCarList[indexPath.row].modelName+" )"
     
-     cell2.MyCarCellLabel2.text = "₹ " + String(Double(newCarList[indexPath.row].price)!) + " Lakh"
+//     cell2.MyCarCellLabel2.text = "₹ " + String(Double(newCarList[indexPath.row].price)!) + " Lakh"
     
-//    if(Int(newCarList[indexPath.row].price)! < 9999999){
-//        cell2.MyCarCellLabel2.text = "₹ " + String(Double(newCarList[indexPath.row].price)! / 100000 ) + " Lakh"
-//    }else  if(Int(newCarList[indexPath.row].price)! > 9999999){
-//        cell2.MyCarCellLabel2.text = "₹ " + String(Double(newCarList[indexPath.row].price)! / 1000000 ) + " Crore"
-//    }
+    if(Int(newCarList[indexPath.row].price)! < 9999999){
+        cell2.MyCarCellLabel2.text = "₹ " + String(Double(newCarList[indexPath.row].price)! / 100000 ) + " Lakh"
+    }else  if(Int(newCarList[indexPath.row].price)! > 9999999){
+        cell2.MyCarCellLabel2.text = "₹ " + String(Double(newCarList[indexPath.row].price)! / 1000000 ) + " Crore"
+    }
     
             return cell2
             
@@ -116,17 +130,12 @@ func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) ->
         self.present(SecVC, animated: true, completion: nil)
        
     }
-        
-        
-    
     
     @IBAction func HometoggleSideMenuBtn(_ sender: UIBarButtonItem) {
         toggleSideMenuView()
         print("Home Menu Button")
     }
     
-    
- 
     
 }
 

@@ -5,7 +5,8 @@
 //  Created by Saurabh Sharma on 12/18/17.
 //  Copyright © 2017 Aritron Technologies. All rights reserved.
 //
-let URLGetHash = "https://payu.herokuapp.com/get_hash"
+
+
 import UIKit
 import Alamofire
 import SwiftyJSON
@@ -14,7 +15,7 @@ import AlamofireImage
 
 
 @available(iOS 10.0, *)
-class MakePaymentViewController: UIViewController,UITabBarDelegate,UITableViewDataSource, VoucherDelegate {
+class MakePaymentViewController: UIViewController,UITableViewDataSource, VoucherDelegate {
     
     @IBOutlet var viewVoucher: UIView!
     @IBOutlet var viewPoints: UIView!
@@ -22,6 +23,7 @@ class MakePaymentViewController: UIViewController,UITabBarDelegate,UITableViewDa
     
     @IBOutlet var constrntVoucherView: NSLayoutConstraint!
     @IBOutlet var contrntPointView: NSLayoutConstraint!
+    @IBOutlet var contrntTableView: NSLayoutConstraint!
     
     @IBOutlet var lbltotalPaybleAmount: UILabel!
     @IBOutlet var lblVoucher: UILabel!
@@ -35,8 +37,6 @@ class MakePaymentViewController: UIViewController,UITabBarDelegate,UITableViewDa
     var amt : String!
     var totAmount : Int!  = 0
     var reservationId : String!
-    var webServiceResponse: PayUWebServiceResponse = PayUWebServiceResponse()
-    var createRequest: PayUCreateRequest = PayUCreateRequest()
     var myCartList : [MyCartModel] = [MyCartModel]()
     var voucherList = [String]()
     var cal : Int = 0
@@ -45,10 +45,7 @@ class MakePaymentViewController: UIViewController,UITabBarDelegate,UITableViewDa
     var voucherVlue : Int = 0
     var balancePoint : Int = 0
     
-    lazy var paymentParams:PayUModelPaymentParams = {
-        return PayUModelPaymentParams()
-    }()
-    
+ 
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -69,6 +66,16 @@ class MakePaymentViewController: UIViewController,UITabBarDelegate,UITableViewDa
         lblAmount.text = "₹ " + String(cal)
         self.lbltotalPaybleAmount.text = "₹ " + String(cal)
     }
+    func UITableView_Auto_Height()
+    {
+        if(self.myTableView.contentSize.height < self.myTableView.frame.height){
+           contrntTableView.constant = self.myTableView.contentSize.height
+        }
+    }
+    override func viewDidAppear (_ animated: Bool) {
+        UITableView_Auto_Height();
+    }
+    
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
@@ -77,134 +84,11 @@ class MakePaymentViewController: UIViewController,UITabBarDelegate,UITableViewDa
     }
     
     @IBAction func btnPay(_ sender: Any) {
-        
-        //        let ORVC = self.storyboard?.instantiateViewController(withIdentifier: "OrderReciptViewController") as! OrderReciptViewController
-        //        //ORVC.delegate = self as! ClasifiedProcDelegate as! RecProcDelegate
-        //        self.present(ORVC, animated: true, completion: nil)
-        //
-        //        let SecVC = self.storyboard?.instantiateViewController(withIdentifier: "OrderReciptViewController") as! OrderReciptViewController
-        //        SecVC.myCartList = myCartList
-        
-        checkOutAction()
-        reserveOrder()
-        paymentParams.key = "PqvxqV"
-        paymentParams.amount = String(cal)
-        paymentParams.productInfo = "iPhone"
-        paymentParams.firstName = "firstName"
-        paymentParams.email = "xyz@gmail.com"
-        setEnvironment(env: ENVIRONMENT_MOBILETEST)
-        paymentParams.transactionID = self.generateTransectionId()
-        paymentParams.surl = "https://payu.herokuapp.com/success"
-        paymentParams.furl = "https://payu.herokuapp.com/failure"
-        paymentParams.udf1 = "udf1"
-        paymentParams.udf2 = "udf2"
-        paymentParams.udf3 = "udf3"
-        paymentParams.udf4 = "udf4"
-        paymentParams.udf5 = "udf5"
-        paymentParams.userCredentials = "PqvxqV:"+"xyz@gmail.com"
-        
-        let obj = PayUDontUseThisClass()
-        obj.getPayUHashes(withPaymentParam: paymentParams, merchantSalt:"6SPh4Ulq") { (allHashes, hashString, errorMessage) in
-            if (errorMessage == nil)
-            {
-                print(allHashes as Any)
-                print(hashString as Any)
-                self.paymentParams.hashes = allHashes
-                self.getHashGet(paymentParams: self.paymentParams)
-                self.callSDKWithHashes(allHashes:allHashes!, withError: errorMessage)
-            }
-            else
-            {
-                print (errorMessage as Any)
-            }
-            
-        }
+        self.checkOutAction()
+        self.reserveOrder()
+
     }
     
-    // MARK: Get Server Hash Key
-    func callSDKWithHashes(allHashes: PayUModelHashes, withError errorMessage: String!) {
-        if errorMessage == nil {
-            paymentParams.hashes = allHashes
-            let webServiceResponse = PayUWebServiceResponse()
-            webServiceResponse.getPayUPaymentRelatedDetail(forMobileSDK: paymentParams) { (paymentDetail, errorMessage, array) in
-                if errorMessage != nil
-                {
-                    print (errorMessage as Any)
-                }else
-                {
-                    let stryBrd = UIStoryboard(name: "PUUIMainStoryBoard", bundle: nil)
-                    let paymentOptionVC = stryBrd.instantiateViewController(withIdentifier: VC_IDENTIFIER_PAYMENT_OPTION) as? PUUIPaymentOptionVC
-                    paymentOptionVC?.paymentParam = self.paymentParams
-                    paymentOptionVC?.paymentRelatedDetail = paymentDetail
-                    self.present(paymentOptionVC ?? UIViewController(), animated: true, completion: nil)
-                }
-            }
-        }
-        else {
-            
-        }
-    }
-    
-    // MARK:  Generate TransactionId
-    
-    func generateTransectionId() -> String{
-        var currentTime:NSString =  "\(NSDate().timeIntervalSince1970)" as NSString
-        currentTime = currentTime.substring(with: NSMakeRange(0, 8)) as NSString
-        let letters : NSString = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        let len = UInt32(letters.length)
-        
-        var randomString = ""
-        for _ in 0 ..< 10 {
-            let rand = arc4random_uniform(len)
-            var nextChar = letters.character(at: Int(rand))
-            randomString += NSString(characters: &nextChar, length: 1) as String
-        }
-        let transactionID = (currentTime as String)
-        return transactionID
-    }
-    
-    // MARK: setEnvironment
-    
-    func setEnvironment(env:String)
-    {
-        paymentParams.environment = ENVIRONMENT_MOBILETEST
-        //        if (env == ENVIRONMENT_TEST){
-        //            paymentParams.key = "gtKFFx"
-        //        }
-        //         else if (env == ENVIRONMENT_TEST){
-        //            paymentParams.key = "gtKFFx"
-        //        }
-    }
-    
-    // MARK: Get Server Hash Key
-    func getHashGet(paymentParams : PayUModelPaymentParams)
-    {
-        
-        let parameters: [String: Any] = ["key" : paymentParams.key,"email" : paymentParams.email,"amount":paymentParams.amount,"firstname" : paymentParams.firstName,"txnid" :self.generateTransectionId(),"udf1" : paymentParams.udf1,"udf2" : paymentParams.udf2,"udf3" : paymentParams.udf3, "udf4" : paymentParams.udf4, "udf5" : paymentParams.udf5, "productinfo": paymentParams.productInfo,"user_credentials":paymentParams.userCredentials
-        ]
-        Alamofire.request(URLGetHash, method:.post,parameters: parameters, encoding: JSONEncoding.default).validate().responseJSON { response in
-            
-            switch response.result {
-            case .success (let value):let json = JSON(value)
-            print("JSON: \(json)")
-            let payUHashes = PayUModelHashes()
-            payUHashes.paymentHash = json["payment_hash"].string
-            payUHashes.paymentRelatedDetailsHash = json["payment_related_details_for_mobile_sdk_hash"].string
-            payUHashes.vasForMobileSDKHash = json["vas_for_mobile_sdk_hash"].string
-            payUHashes.deleteUserCardHash = json["delete_user_card_hash"].string
-            payUHashes.editUserCardHash = json["edit_user_card_hash"].string
-            payUHashes.saveUserCardHash = json["save_user_card_hash"].string
-            payUHashes.getUserCardHash = json["get_user_cards_hash"].string
-            payUHashes.offerHash = json["check_offer_status_hash"].string
-            
-            self.callSDKWithHashes(allHashes:payUHashes, withError:"nil")
-                /***************** Network Error *****************/
-            case .failure (let error):
-                self.view.makeToast("Network Error")
-                
-            }
-        }
-    }
     
     @IBAction func btnBack(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)
@@ -212,7 +96,7 @@ class MakePaymentViewController: UIViewController,UITabBarDelegate,UITableViewDa
     
     func vaucherList(selectVoucherList: [String]) {
         voucherList = selectVoucherList
-        checkOutAction()
+        getVoucherDetails()
         print("Voucher List: \(voucherList)")
     }
     
@@ -226,7 +110,7 @@ class MakePaymentViewController: UIViewController,UITabBarDelegate,UITableViewDa
         if(txtFldEnterReedPoint.text?.isEmpty)!{
             self.view.makeToast("Please Enter Reedeem Points")
         }else{
-            checkOutAction()
+            getVoucherDetails()
         }
     }
     
@@ -258,7 +142,7 @@ class MakePaymentViewController: UIViewController,UITabBarDelegate,UITableViewDa
     
     
     func checkOutAction(){
-        
+        self.view.makeToastActivity(.center)
         let token : String = UserDefaults.standard.string(forKey: "token")!
         let loyaltyId : String = UserDefaults.standard.string(forKey: "loyaltyId")!
         var transactions = [Any]()
@@ -281,6 +165,137 @@ class MakePaymentViewController: UIViewController,UITabBarDelegate,UITableViewDa
             switch response.result {
             case .success (let value):
                 let json = JSON(value)
+                self.view.hideToastActivity()
+                print("JSON: \(json)")
+                
+                let status = json["status"].stringValue
+                if (status == WebUrl.SUCCESS_CODE){
+                    let data = json["data"].array
+                    UserDefaults.standard.set(String(describing: json), forKey: "data") //setObject
+                    for i in data! {
+                        let data2 = i.array![0]
+                        let totalTax = data2["totalTax"].stringValue
+                        let loyaltyAssociateId = data2["loyaltyAssociateId"].stringValue
+                        let totalAmount = data2["totalAmount"].stringValue
+                        let redeemPoints = data2["redeemPoints"].stringValue
+                        let loyaltyUserTierType = data2["loyaltyUserTierType"].stringValue
+                        let loyaltyId = data2["loyaltyId"].stringValue
+                        
+                        print("totalTax: \(totalTax)")
+                        print("loyaltyAssociateId: \(loyaltyAssociateId)")
+                        print("totalAmount: \(totalAmount)")
+                        
+                        let transactions = data2["transactions"].array
+                        print("transactions: \(transactions)")
+                        
+                        var redeemPnt : Int? = nil
+                        
+                        for j in transactions!{
+                            let productId = j["productId"].stringValue
+                            let additionalInfo = j["additionalInfo"].stringValue
+                            let minRedeemPoint = j["minRedeemPoint"].stringValue
+                            let txnTier = j["txnTier"].stringValue
+                            let maxRedeemPoint = j["maxRedeemPoint"].stringValue
+                            let txnTax = j["txnTax"].stringValue
+                            let couponName = j["couponName"].stringValue
+                            let redeemValue = j["redeemValue"].stringValue
+                            let couponCode = j["couponCode"].stringValue
+                            let couponId = j["couponId"].stringValue
+                            let activationDate = j["activationDate"].stringValue
+                            let couponValue = j["couponValue"].stringValue
+                            let voucherName = j["voucherName"].stringValue
+                            let txnAmount = j["txnAmount"].stringValue
+                            let balanceWithoutRedeem = j["balanceWithoutRedeem"].stringValue
+                            let voucherValue = j["voucherValue"].intValue
+                            let expiryDate = j["expiryDate"].stringValue
+                            let txnId = j["txnId"].stringValue
+                            let serviceName = j["serviceName"].stringValue
+                            let txnPartnerTransaction = j["txnPartnerTransaction"].stringValue
+                            let quantity = j["quantity"].stringValue
+                            let awardBalanceWithoutRedeem = j["awardBalanceWithoutRedeem"].stringValue
+                            let txnPartnerId = j["txnPartnerId"].stringValue
+                            let txnType = j["txnType"].stringValue
+                            let price = j["price"].stringValue
+                            let balanceWithRedeem = j["balanceWithRedeem"].intValue
+                            self.balancePoint = self.balancePoint + balanceWithRedeem
+                            let awardBalanceWithRedeem = j["awardBalanceWithRedeem"].stringValue
+                            let redeemPoint = j["redeemPoint"].intValue
+                            let voucherId = j["voucherId"].stringValue
+                            
+                            self.redeem = self.redeem + redeemPoint
+                            print("MyRedeem Points: \(self.redeem)")
+                            
+                            self.voucherVlue = self.voucherVlue + voucherValue
+                            print("My voucherVlue : \(self.redeem)")
+                            self.totAmount = self.cal
+                            
+                        }
+                    }
+                    if(self.redeem != 0){
+                        self.contrntPointView.isActive = true
+                        self.viewPoints.isHidden = false
+                        self.lblpoints.text = String(self.redeem)
+                        self.lblpoints.isHidden = false
+                        self.totAmount = self.totAmount - self.redeem
+                        self.lbltotalPaybleAmount.text = "₹ " + String(self.totAmount)
+                        self.txtFldEnterReedPoint.text = ""
+                        
+                    }else if (self.redeem == 0){
+//                        let alert = UIAlertController(title: "Alert", message: "No Points Applied", preferredStyle: UIAlertControllerStyle.alert)
+//                        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+//                        self.present(alert, animated: true, completion: nil)
+                    }
+                    
+                     else if (self.voucherVlue != 0){
+                        self.constrntVoucherView.isActive = true
+                        self.viewVoucher.isHidden = false
+                        self.lblVoucher.text = String(self.voucherVlue)
+                        self.lblVoucher.isHidden = false
+                         self.totAmount = self.totAmount - self.voucherVlue
+                        self.lbltotalPaybleAmount.text = "₹ " + String(self.balancePoint)
+                        self.myTableView.reloadData()
+                    }
+                    else if (self.voucherVlue == 0){
+                        let alert = UIAlertController(title: "Alert", message: "No Voucher Applied", preferredStyle: UIAlertControllerStyle.alert)
+                        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+                        self.present(alert, animated: true, completion: nil)
+                    }
+                }
+                
+                /***************** Network Error *****************/
+            case .failure (let error):
+                self.view.hideToastActivity()
+                print(error)
+                self.view.makeToast("Network Error")
+            }
+        }
+    }
+    
+    func getVoucherDetails(){
+        self.view.makeToastActivity(.center)
+        let token : String = UserDefaults.standard.string(forKey: "token")!
+        let loyaltyId : String = UserDefaults.standard.string(forKey: "loyaltyId")!
+        var transactions = [Any]()
+        
+        for i in 0..<myCartList.count{
+            transactions.append(["price":myCartList[i].price, "quantity": myCartList[i].quantity, "productId" : myCartList[i].productId])
+        }
+        
+        let parameters: [String: Any] = ["loyaltyId":loyaltyId,
+                                         "redeemPoint": txtFldEnterReedPoint.text!,
+                                         "transactions" : transactions
+        ]
+        
+        print(parameters)
+        
+        //Alamofire Request
+        Alamofire.request(WebUrl.CHECK_OUT_URL+"?token="+token, method: .post,parameters: parameters, encoding: JSONEncoding.default).validate().responseJSON { response in
+            
+            /*****************Response Success *****************/
+            switch response.result {
+            case .success (let value):
+                let json = JSON(value)
+                self.view.hideToastActivity()
                 print("JSON: \(json)")
                 
                 let status = json["status"].stringValue
@@ -347,12 +362,19 @@ class MakePaymentViewController: UIViewController,UITabBarDelegate,UITableViewDa
                             
                         }
                     }
+                    
                     if(self.redeem != 0){
                         self.contrntPointView.isActive = true
                         self.viewPoints.isHidden = false
                         self.lblpoints.text = String(self.redeem)
                         self.lblpoints.isHidden = false
-                        //self.totAmount = self.totAmount - self.redeem
+                        self.totAmount = self.totAmount - self.redeem
+                        self.lbltotalPaybleAmount.text = "₹ " + String(self.totAmount)
+                        
+                    }else if (self.redeem == 0){
+                        let alert = UIAlertController(title: "Alert", message: "No Points Applied", preferredStyle: UIAlertControllerStyle.alert)
+                        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+                        self.present(alert, animated: true, completion: nil)
                     }
                         
                     else if (self.voucherVlue != 0){
@@ -360,14 +382,21 @@ class MakePaymentViewController: UIViewController,UITabBarDelegate,UITableViewDa
                         self.viewVoucher.isHidden = false
                         self.lblVoucher.text = String(self.voucherVlue)
                         self.lblVoucher.isHidden = false
-                        // self.totAmount = self.totAmount - self.voucherVlue
+                        self.totAmount = self.totAmount - self.voucherVlue
                         self.lbltotalPaybleAmount.text = "₹ " + String(self.balancePoint)
                         self.myTableView.reloadData()
                     }
+                    else if (self.voucherVlue == 0 ){
+                        let alert = UIAlertController(title: "Alert", message: "No Voucher Applied", preferredStyle: UIAlertControllerStyle.alert)
+                        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+                        self.present(alert, animated: true, completion: nil)
+                    }
+                    self.txtFldEnterReedPoint.text = ""
                 }
                 
                 /***************** Network Error *****************/
             case .failure (let error):
+                self.view.hideToastActivity()
                 print(error)
                 self.view.makeToast("Network Error")
             }
@@ -376,7 +405,7 @@ class MakePaymentViewController: UIViewController,UITabBarDelegate,UITableViewDa
     
     
     func reserveOrder(){
-        
+        self.view.makeToastActivity(.center)
         
         let token : String = UserDefaults.standard.string(forKey: "token")!
         let loyaltyId : String = UserDefaults.standard.string(forKey: "loyaltyId")!
@@ -393,6 +422,7 @@ class MakePaymentViewController: UIViewController,UITabBarDelegate,UITableViewDa
         ]
         
         print(parameters)
+        print("url: \(WebUrl.RESERVE_CUSTOMER_ORDER_URL+"?token="+token)")
         
         //Alamofire Request
         Alamofire.request(WebUrl.RESERVE_CUSTOMER_ORDER_URL+"?token="+token, method: .post,parameters: parameters, encoding: JSONEncoding.default).validate().responseJSON { response in
@@ -400,93 +430,32 @@ class MakePaymentViewController: UIViewController,UITabBarDelegate,UITableViewDa
             /*****************Response Success *****************/
             switch response.result {
             case .success (let value):let json = JSON(value)
+            self.view.hideToastActivity()
             print("JSON: \(json)")
             let status = json["status"].stringValue
             if (status == WebUrl.SUCCESS_CODE){
                 let data = json["data"].array
-                
                 for i in data! {
                     self.reservationId = i["reserveId"].stringValue
-                    self.confirmOrder()
+                    print("Reservation Id: \(self.reservationId)")
                 }
+                let PaymentVc = self.storyboard?.instantiateViewController(withIdentifier: "Payment") as! Payment
+                PaymentVc.reservationId = self.reservationId
+                PaymentVc.toatlPaybleAmount = String(self.cal)
+                
+                self.present(PaymentVc, animated: true, completion: nil)
                 }
                 
                 /***************** Network Error *****************/
             case .failure (let error):
+                self.view.hideToastActivity()
                 print(error)
                 self.view.makeToast("Network Error")
             }
         }
     }
     
-    func confirmOrder() {
-        
-        let token : String = UserDefaults.standard.string(forKey: "token")!
-        let loyaltyId : String = UserDefaults.standard.string(forKey: "loyaltyId")!
-        
-        let parameters: [String: Any] = ["loyaltyId":loyaltyId, "reservationId" : self.reservationId]
-        
-        print(parameters)
-        
-        //Alamofire Request
-        Alamofire.request(WebUrl.CONFIRM_CUSTOMER_ORDER_URL+"?token="+token, method: .post,parameters: parameters, encoding: JSONEncoding.default).validate().responseJSON { response in
-            
-            /*****************Response Success *****************/
-            switch response.result {
-            case .success (let value):let json = JSON(value)
-            print("JSON: \(json)")
-            let status = json["status"].stringValue
-            if (status == WebUrl.SUCCESS_CODE){
-                let data = json["data"].array
-                
-                for i in data! {
-                    var orderId = i["orderId"].stringValue
-                    UserDefaults.standard.set(orderId, forKey: "orderId")
-                    self.deleteCart(orderId: orderId)
-                }
-                }
-                
-                /***************** Network Error *****************/
-            case .failure (let error):
-                print(error)
-                self.view.makeToast("Network Error")
-            }
-        }
-    }
-    
-    func deleteCart(orderId : String){
-        let token : String = UserDefaults.standard.string(forKey: "token")!
-        let loyaltyId : String = UserDefaults.standard.string(forKey: "loyaltyId")!
-        
-        let parameters: [String: Any] = ["loyaltyId":loyaltyId, "orderId" : orderId]
-        
-        print(parameters)
-        
-        //Alamofire Request
-        Alamofire.request(WebUrl.CLEAR_CART+"?token="+token, method: .post,parameters: parameters, encoding: JSONEncoding.default).validate().responseJSON { response in
-            
-            /*****************Response Success *****************/
-            switch response.result {
-            case .success (let value):let json = JSON(value)
-            print("JSON: \(json)")
-            let status = json["status"].stringValue
-            if (status == WebUrl.SUCCESS_CODE){
-                let data = json["data"].array
-                //
-                //                for i in data! {
-                //                    var orderId = i["orderId"].stringValue
-                //                }
-                }
-                
-                /***************** Network Error *****************/
-            case .failure (let error):
-                print(error)
-                self.view.makeToast("Network Error")
-            }
-        }
-    }
-    ///////////*****************Function Start to Get Total Points *****************///////////
-    func getTotalPoint(){
+     func getTotalPoint(){
         let token : String = UserDefaults.standard.string(forKey: "token")!
         let loyaltyId : String = UserDefaults.standard.string(forKey: "loyaltyId")!
         
@@ -511,11 +480,11 @@ class MakePaymentViewController: UIViewController,UITabBarDelegate,UITableViewDa
                 }
             //Network Error
             case .failure (let error):
+                self.view.hideToastActivity()
                 self.view.makeToast("Network Error")
             }
         }
     }
-    /*****************Function End to Get Total Points *****************///////////
     
 }
 

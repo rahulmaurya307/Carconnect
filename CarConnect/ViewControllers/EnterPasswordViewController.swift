@@ -26,16 +26,21 @@ class EnterPasswordViewController: UIViewController,UITextFieldDelegate {
     
     
     @IBAction func btnSubmit(_ sender: Any) {
+        
         if(textFldEnterPass.text?.isEmpty)!{
+           
             self.view.makeToast("Please Enter Password")
         }
         else if(txtFldConfirmPass.text?.isEmpty)!{
+            
             self.view.makeToast("Please Enter Confirm Password")
         }
        else if(textFldEnterPass.text != txtFldConfirmPass.text){
+           
             self.view.makeToast("Password or Confirm Password Does Not Match")
         }
         else {
+          
             SubmitPassword()
         }
         
@@ -43,6 +48,8 @@ class EnterPasswordViewController: UIViewController,UITextFieldDelegate {
     
     func SubmitPassword()
     {
+        self.view.makeToastActivity(.center)
+       
 //Set Parameters
         
     let parameters: [String: Any] = ["userMobile" : mobileNumber,"password" :textFldEnterPass.text]
@@ -53,6 +60,8 @@ class EnterPasswordViewController: UIViewController,UITextFieldDelegate {
             
             switch response.result {
             case .success (let value):let json = JSON(value)
+          
+            self.view.hideToastActivity()
             print("JSON: \(json)")
             let status = json["status"].stringValue
             
@@ -63,11 +72,12 @@ class EnterPasswordViewController: UIViewController,UITextFieldDelegate {
                 let SecVC = self.storyboard?.instantiateViewController(withIdentifier: "SecondViewController") as! SecondViewController
                 SecVC.mobileNumber = self.mobileNumber
                 self.present(SecVC, animated: true, completion: nil)
-                
+               
                 }
  
 /***************** Network Error *****************/
             case .failure (let error):
+                self.view.hideToastActivity()
                 self.view.makeToast("Server Error")
             }
         }

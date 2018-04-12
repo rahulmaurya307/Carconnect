@@ -23,9 +23,9 @@ class CompareViewController: UIViewController,UITableViewDelegate, UITableViewDa
     
     @IBOutlet var view2CarName: UIView!
     
-    @IBOutlet var txvw1CarName: UITextView!
+    @IBOutlet var txvw1CarName: UILabel!
     
-    @IBOutlet var txtvw2CarName: UITextView!
+    @IBOutlet var txtvw2CarName: UILabel!
     
     @IBOutlet var segmentControll: UISegmentedControl!
     
@@ -64,12 +64,12 @@ class CompareViewController: UIViewController,UITableViewDelegate, UITableViewDa
     var i : Int! = 0
     var j : Int! = 0
     
-    
+    override func viewWillAppear(_ animated: Bool) {
+         self.sideMenuController()?.sideMenu?.delegate = MySideMenu()
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.sideMenuController()?.sideMenu?.delegate = MySideMenu()
-        
 
         view1CarName.isHidden = true
         view2CarName.isHidden = true
@@ -149,7 +149,6 @@ class CompareViewController: UIViewController,UITableViewDelegate, UITableViewDa
             UserDefaults.standard.string(forKey: "varientName1")! + " )"
             txtvw2CarName.text = UserDefaults.standard.string(forKey: "modelName2")! + " (" + UserDefaults.standard.string(forKey: "varientName2")! + " )"
         
-            
         }
         
     }
@@ -251,13 +250,14 @@ class CompareViewController: UIViewController,UITableViewDelegate, UITableViewDa
     }
     
     
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
-    {
-        return 75;//Choose your custom row height
-    }
+//    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
+//    {
+//        return 75;//Choose your custom row height
+//    }
     
     
     func getCompareData() {
+        self.view.makeToastActivity(.center)
         let token : String = UserDefaults.standard.string(forKey: "token")!
         let varientId1 : String = UserDefaults.standard.string(forKey: "varientId1")!
         let varientId2 : String = UserDefaults.standard.string(forKey: "varientId2")!
@@ -272,6 +272,7 @@ class CompareViewController: UIViewController,UITableViewDelegate, UITableViewDa
             
             switch response.result {
             case .success (let value):let json = JSON(value)
+            self.view.hideToastActivity()
             print("JSON: \(json)")
             let status = json["status"].stringValue
             if (status == WebUrl.SUCCESS_CODE){
@@ -320,6 +321,7 @@ class CompareViewController: UIViewController,UITableViewDelegate, UITableViewDa
                 
                 /***************** Network Error *****************/
             case .failure (let error):
+                self.view.hideToastActivity()
                 self.view.makeToast("Network Error")
             }
         }

@@ -13,9 +13,11 @@ import SwiftyJSON
 import Toast_Swift
 
 class EstoreDetailViewController: UIViewController {
+    @IBOutlet fileprivate var rightBarButton: BadgedBarButtonItem!
     var productId : String!
     var itemLeft : Int!
     var cart : String!
+    var productList : [JSON]?
     
     @IBOutlet var btnPlus: UIButton!
     @IBOutlet var imgProduct: UIImageView!
@@ -56,6 +58,10 @@ class EstoreDetailViewController: UIViewController {
        
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        getMyCartListCount()
+    }
+    
     @IBAction func backBtn(_ sender: Any) {
         self.dismiss(animated: false, completion: nil)
     }
@@ -87,7 +93,7 @@ class EstoreDetailViewController: UIViewController {
     }
     
     func addCartAction(){
-        
+        self.view.makeToastActivity(.center)
         let token : String = UserDefaults.standard.string(forKey: "token")!
         let loyaltyId : String = UserDefaults.standard.string(forKey: "loyaltyId")!
         
@@ -100,10 +106,12 @@ class EstoreDetailViewController: UIViewController {
             //Response Success
             switch response.result {
             case .success (let value):let json = JSON(value)
+            self.view.hideToastActivity()
             print("Track Referal JSON: \(json)")
             let status = json["status"].stringValue
             if (status == WebUrl.SUCCESS_CODE){
                 self.view.makeToast("Succesfully Add to Cart.")
+                self.getMyCartListCount()
                
             }
                     
@@ -117,6 +125,7 @@ class EstoreDetailViewController: UIViewController {
     }
     
     func updateCartAction(){
+        self.view.makeToastActivity(.center)
         var myCart : Int? = Int(cart!)
         var mylblCount : Int? = Int(lblCount.text!)
         
@@ -140,6 +149,7 @@ class EstoreDetailViewController: UIViewController {
             //Response Success
             switch response.result {
             case .success (let value):let json = JSON(value)
+            self.view.hideToastActivity()
             print("Track Referal JSON: \(json)")
             let status = json["status"].stringValue
             if (status == WebUrl.SUCCESS_CODE){
@@ -149,6 +159,7 @@ class EstoreDetailViewController: UIViewController {
                 
             //Network Error
             case .failure (let error):
+                self.view.hideToastActivity()
                 self.view.makeToast("Network Error")
             }
             
@@ -158,6 +169,7 @@ class EstoreDetailViewController: UIViewController {
     
    
     func getDealerProductDetail(){
+        self.view.makeToastActivity(.center)
         let token : String = UserDefaults.standard.string(forKey: "token")!
         let loyaltyId : String = UserDefaults.standard.string(forKey: "loyaltyId")!
         
@@ -169,6 +181,7 @@ class EstoreDetailViewController: UIViewController {
             //Response Success
             switch response.result {
             case .success (let value):let json = JSON(value)
+            self.view.hideToastActivity()
             print("Track Referal JSON: \(json)")
             let status = json["status"].stringValue
             if (status == WebUrl.SUCCESS_CODE){
@@ -224,13 +237,45 @@ class EstoreDetailViewController: UIViewController {
                     self.txtvwNameDetails.text = productName
                     self.txtvwDescription.text = productDescription
                     
-                    
                 }
                 
-                
-                
-                
         }
+0            //Network Error
+            case .failure (let error):
+                self.view.hideToastActivity()
+                self.view.makeToast("Network Error")
+            }
+        }
+    }
+    
+    func getMyCartListCount()
+    {
+        self.view.makeToastActivity(.center)
+        let token : String = UserDefaults.standard.string(forKey: "token")!
+        let loyaltyId : String = UserDefaults.standard.string(forKey: "loyaltyId")!
+        
+        // Parameters
+        let parameters: [String: Any] = ["loyaltyId":loyaltyId]
+        
+        //Alamofire Request
+        Alamofire.request(WebUrl.CART_LIST_URL+"?token="+UserDefaults.standard.string(forKey: "token")!, method: .post,parameters: parameters, encoding: JSONEncoding.default).validate().responseJSON { response in
+            //Response Success
+            switch response.result {
+            case .success (let value):let json = JSON(value)
+            self.view.hideToastActivity()
+            print("Track Referal JSON: \(json)")
+            let status = json["status"].stringValue
+            if (status == WebUrl.SUCCESS_CODE){
+                UserDefaults.standard.set(String(describing: json), forKey: "cartData") //setObject
+                let data = json["data"].array
+                for i in data! {
+                    let myTrackRefList = JSON(i)
+                    self.productList = myTrackRefList["productList"].array
+                }
+                print("productList : \(self.productList?.count)")
+                self.rightBarButton.badgeValue = (self.productList?.count)!
+                
+                }
                 
             //Network Error
             case .failure (let error):
@@ -240,8 +285,6 @@ class EstoreDetailViewController: UIViewController {
     }
     
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-    }
+   
     
 }

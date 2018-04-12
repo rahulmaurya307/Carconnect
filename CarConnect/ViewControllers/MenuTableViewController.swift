@@ -7,17 +7,20 @@
 //
 
 import UIKit
+import AlamofireImage
+import Alamofire
+import Toast_Swift
+import SwiftyJSON
 
 struct CellData {
     
     var cell : Int!
     var text : String!
     var image : UIImage!
-    
    
-    
 }
 class MenuTableViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+    @IBOutlet var lblCardNo: UILabel!
     
     @IBOutlet var lblName: UILabel!
     var selectedMenuItem : Int = 0
@@ -35,7 +38,7 @@ class MenuTableViewController: UIViewController, UITableViewDelegate, UITableVie
     override func viewDidLoad() {
         super.viewDidLoad()
         
-
+            getProfile()
             arrayofcelldata = [CellData(cell : 1, text : "Home", image:#imageLiteral(resourceName: "ic_home")),
                            CellData(cell : 1, text : "My Rewards", image :#imageLiteral(resourceName: "ic_used_car_green")),
                            CellData(cell : 1, text : "E-Store", image :#imageLiteral(resourceName: "ic_used_car_green")),
@@ -49,7 +52,51 @@ class MenuTableViewController: UIViewController, UITableViewDelegate, UITableVie
                            CellData(cell : 1, text : "Brand HelpLines", image : #imageLiteral(resourceName: "ic_helpline")  ),
                            CellData(cell : 1, text : "Logout", image :#imageLiteral(resourceName: "ic_expert_review_green") )]
                 lblName.text = UserDefaults.standard.string(forKey: "name")!
+        
+        
     }
+    
+    func getProfile(){
+        self.view.makeToastActivity(.center)
+        let token : String = UserDefaults.standard.string(forKey: "token")!
+        let userId : String = UserDefaults.standard.string(forKey: "userId")!
+        
+        // Parameters
+        let parameters: [String: Any] = ["userId":userId]
+        
+        //Alamofire Request
+        Alamofire.request(WebUrl.GET_PROFILE+"?token="+token, method: .post,parameters: parameters, encoding: JSONEncoding.default).validate().responseJSON { response in
+            // print("NewCarJsonResponse: \(response.result)")
+            
+            /*****************Response Success *****************/
+            switch response.result {
+            case .success (let value):let json = JSON(value)
+            self.view.hideToastActivity()
+            print("JSON: \(json)")
+            let status = json["status"].stringValue
+            if (status == WebUrl.SUCCESS_CODE){
+                let data = json["data"].array
+                
+                for i in data! {
+                    //let newCarList = i["newcarList"] as JSON // Read Json Object
+                    let userInfo = i["userInfo"].array
+                    
+                    for dataModel in userInfo! {      // Parse Json Array
+                        let cardNo = dataModel["cardNo"].stringValue
+                        self.lblCardNo.text = cardNo
+                        print("cardNo : \(cardNo)")
+                    }
+                   
+                }
+                }
+                /***************** Network Error *****************/
+            case .failure (let error):
+                self.view.hideToastActivity()
+                self.view.makeToast("Network Error")
+            }
+        }
+    }
+  
     
     // number of rows in table view
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -59,9 +106,9 @@ class MenuTableViewController: UIViewController, UITableViewDelegate, UITableVie
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
             let cell = Bundle.main.loadNibNamed("MenuTableViewCell", owner: self, options: nil)?.first as! MenuTableViewCell
             cell.MainImageView.image = arrayofcelldata[indexPath.row].image
+            cell.MainLabel.text = arrayofcelldata[indexPath.row].text
         cell.MainImageView.image = cell.MainImageView.image!.withRenderingMode(.alwaysTemplate)
         cell.MainImageView.tintColor = UIColor.white
-            cell.MainLabel.text = arrayofcelldata[indexPath.row].text
             return cell
   
     }
@@ -188,7 +235,6 @@ class MenuTableViewController: UIViewController, UITableViewDelegate, UITableVie
                     
                      let SecVC = self.storyboard?.instantiateViewController(withIdentifier: "ViewController") as! ViewController
                       self.present(SecVC, animated: true, completion: nil)
-                    
                 }
                 break
               
@@ -210,7 +256,7 @@ class MenuTableViewController: UIViewController, UITableViewDelegate, UITableVie
                 case .default:
                     print("Loyalty Details")
                     let SecVC = self.storyboard?.instantiateViewController(withIdentifier: "LoyaltyDetailViewController") as! LoyaltyDetailViewController
-                    
+            
                     self.present(SecVC, animated: true, completion: nil)
                     
                 case .cancel:
@@ -238,5 +284,6 @@ class MenuTableViewController: UIViewController, UITableViewDelegate, UITableVie
                 }}))
             alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
         
+    
     }
 }

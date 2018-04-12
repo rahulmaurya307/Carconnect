@@ -23,12 +23,15 @@ class HomeViewController: UIViewController {
     @IBOutlet weak var HomeScrollView: UIScrollView!
     var imageArray = [UIImage]()
     var skipLog : String!
-    var image1 : String!
+    
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        //getProfile()
         getHomeDetail()
-        imageArray = [#imageLiteral(resourceName: "car5"),#imageLiteral(resourceName: "Car2"),#imageLiteral(resourceName: "Car3"),#imageLiteral(resourceName: "car5"),]
+       // imageArray = [#imageLiteral(resourceName: "car5"),#imageLiteral(resourceName: "Car2"),#imageLiteral(resourceName: "Car3"),#imageLiteral(resourceName: "car5"),]
+       
         
     }
     @IBAction func btnMyRewards(_ sender: Any) {
@@ -44,9 +47,12 @@ class HomeViewController: UIViewController {
         let EstoreVC = self.storyboard?.instantiateViewController(withIdentifier: "EStoreViewController") as! EStoreViewController
         self.navigationController?.pushViewController(EstoreVC, animated: true)
         
-        
     }
     
+    @IBAction func btnMyCars(_ sender: Any) {
+        let MyCarsVC = self.storyboard?.instantiateViewController(withIdentifier: "MyCarsViewController") as! MyCarsViewController
+        self.navigationController?.pushViewController(MyCarsVC, animated: true)
+    }
     func skipItems(){
         let skipLog : String! = UserDefaults.standard.string(forKey: "skipLog")!
         if skipLog == "skipLog"{
@@ -109,10 +115,7 @@ class HomeViewController: UIViewController {
         self.navigationController?.pushViewController(PopularUsedVC, animated: true)
     }
     
-    @IBAction func btnMyCars(_ sender: Any) {
-        let PopularUsedVC = self.storyboard?.instantiateViewController(withIdentifier: "MyCarsViewController") as! MyCarsViewController
-        self.navigationController?.pushViewController(PopularUsedVC, animated: true)
-    }
+
     
     @IBAction func btnNewsHome(_ sender: Any) {
         let NewsVC = self.storyboard?.instantiateViewController(withIdentifier: "NewsViewController") as! NewsViewController
@@ -134,8 +137,6 @@ class HomeViewController: UIViewController {
         let token : String = UserDefaults.standard.string(forKey: "token")!
         // Parameters
         let parameters: [String: Any] = ["token":token]
-        
-         print(WebUrl.HOME_PAGE_URL+"?token="+UserDefaults.standard.string(forKey: "token")!)
         
         //Alamofire Request
         Alamofire.request(WebUrl.HOME_PAGE_URL+"?token="+UserDefaults.standard.string(forKey: "token")!, method: .post,parameters: parameters, encoding: JSONEncoding.default).validate().responseJSON { response in
@@ -159,14 +160,10 @@ class HomeViewController: UIViewController {
                         var id = i["id"].stringValue
                         image = i["image"].stringValue
                         
+                        
                     }
                     
                     let newCarArray = newsList["newcarList"].array
-                    var arry1 = newCarArray![0] as JSON
-                    self.image1 = arry1["modelImage"].stringValue
-                    
-                    
-                    
                     for i in newCarArray! {
                         // new car Array
                         
@@ -175,7 +172,6 @@ class HomeViewController: UIViewController {
                         brandName = i["brandName"].stringValue
                         modelName = i["modelName"].stringValue
                         modelImage = i["modelImage"].stringValue
-                        
                         
                         
                     }
@@ -209,42 +205,38 @@ class HomeViewController: UIViewController {
                         
                         print(vehicleImages1)
                     }
-                    
-                    if(image != nil){
-                        let myNewsImage = WebUrl.NEWS_IMAGE_URL+image
-                        let newsurl = URL(string: myNewsImage)!
-                        self.imgvwNews.af_setImage(withURL: newsurl)
+                    if (image != nil){
+                    let myNewsImage = WebUrl.NEWS_IMAGE_URL+image
+                    let newsurl = URL(string: myNewsImage)!
+                    self.imgvwNews.af_setImage(withURL: newsurl)
                     }
                     self.lblNews.text = title
                     
                     if(modelImage != nil){
-                        let myNewCarsImage = WebUrl.NEW_CARS + self.image1
-                        print("myNewCarsImage \(myNewCarsImage)")
+                    let myNewCarsImage = WebUrl.NEW_CARS + modelImage
                     let newCarurl = URL(string: myNewCarsImage)!
                     self.imgvwNewCars.af_setImage(withURL: newCarurl)
                     }
                     self.lblNewCar.text = brandName + "(" + modelName + ")"
                     
-                    if(vehicleImages1 != nil){
+                    if (vehicleImages1 != nil){
                     let myUsedCarsImage = WebUrl.USED_CAR_IMAGE_URL+vehicleImages1
                     let url = URL(string: myUsedCarsImage)!
                     self.imgvwUsedCar.af_setImage(withURL: url)
                     self.lblUsedCar.text = brandName + "(" + modelName + ")"
                     }
-                   
-                    
-                    
-                    
                 }
-                }
-                
+            }
                 
             //Network Error
             case .failure (let error):
+                self.view.hideToastActivity()
                 self.view.makeToast("Network Error")
             }
         }
     }
+    
+   
     
     @IBAction func HometoggleSideMenuBtn(_ sender: UIBarButtonItem) {
         toggleSideMenuView()
@@ -259,6 +251,4 @@ class HomeViewController: UIViewController {
         self.navigationController?.pushViewController(PopularCarVC, animated: true)
     }
     
-    
 }
-

@@ -69,6 +69,7 @@ class VoucherViewController: UIViewController,UITableViewDataSource,UITableViewD
     }
     
 func getVoucherName() {
+    self.view.makeToastActivity(.center)
         let token : String = UserDefaults.standard.string(forKey: "token")!
         let loyaltyId : String = UserDefaults.standard.string(forKey: "loyaltyId")!
         
@@ -80,6 +81,7 @@ func getVoucherName() {
             //Response Success
             switch response.result {
             case .success (let value):let json = JSON(value)
+            self.view.hideToastActivity()
             print("JSON: \(json)")
             let status = json["status"].stringValue
             if (status == WebUrl.SUCCESS_CODE){
@@ -112,6 +114,7 @@ func getVoucherName() {
                 
             //Network Error
             case .failure (let error):
+                self.view.hideToastActivity()
                 self.view.makeToast("Network Error")
             }
         }

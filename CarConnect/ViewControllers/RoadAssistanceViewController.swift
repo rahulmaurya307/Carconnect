@@ -13,6 +13,7 @@ import Toast_Swift
 
 class RoadAssistanceViewController: UIViewController,UITableViewDelegate, UITableViewDataSource{
     
+    @IBOutlet var noItemView: UIView!
     var roadAssistanceList : [RoadAssistance] = [RoadAssistance]()
     var selectedMenuItem : Int = 0
     @IBOutlet var tableView2: UITableView!
@@ -20,13 +21,26 @@ class RoadAssistanceViewController: UIViewController,UITableViewDelegate, UITabl
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        tableView2.backgroundView = noItemView
+        noItemView.isHidden = true
         self.sideMenuController()?.sideMenu?.delegate = MySideMenu()
         getRoadAssistanceList()
     }
     
+    
+    func noData(){
+        if tableView2.visibleCells.isEmpty{
+            noItemView.isHidden = false
+            tableView2.separatorStyle = .none
+        }else {
+            noItemView.isHidden = true
+            tableView2.separatorStyle = .singleLine
+        }
+    }
+    
     func getRoadAssistanceList(){
+        self.view.makeToastActivity(.center)
             let token : String = UserDefaults.standard.string(forKey: "token")!
-            
             // Parameters
             let parameters: [String: Any] = ["token":token]
             
@@ -37,6 +51,7 @@ class RoadAssistanceViewController: UIViewController,UITableViewDelegate, UITabl
 /*****************Response Success *****************/
                 switch response.result {
                 case .success (let value):let json = JSON(value)
+                self.view.hideToastActivity()
                 print("JSON: \(json)")
                 let status = json["status"].stringValue
                 if (status == WebUrl.SUCCESS_CODE){
@@ -58,12 +73,14 @@ class RoadAssistanceViewController: UIViewController,UITableViewDelegate, UITabl
                         }
                         
                         self.tableView2.reloadData()
+                        self.noData()
                         
                     }
                     }
                     
 /***************** Network Error *****************/
                 case .failure (let error):
+                    self.view.hideToastActivity()
                     self.view.makeToast("Network Error")
                 }
             }

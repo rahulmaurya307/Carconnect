@@ -7,8 +7,16 @@ import Toast_Swift
 
 
 @objc class EStoreViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+   @IBOutlet fileprivate var rightBarButton: BadgedBarButtonItem!
+    fileprivate var leftCount = 0
+    fileprivate var rightCount = 0
     
+    @IBOutlet var btnOrder: UIButton!
+    @IBOutlet var btnPartner: UIButton!
+    @IBOutlet var btnDealer: UIButton!
     @IBOutlet var myTableConstraint: NSLayoutConstraint!
+    @IBOutlet var noItemsView : UIView!
+    var sender: BadgedBarButtonItem!
     
     @IBOutlet weak var View3: UIView!
     @IBOutlet weak var myTablview: UITableView!
@@ -17,18 +25,65 @@ import Toast_Swift
     var orderSummaryList : [OrderSummaryModel] = [OrderSummaryModel]()
     var CouponList : [CouponModel] = [CouponModel]()
     var VoucherList : [VoucherModel] = [VoucherModel]()
+    var productList : [JSON]?
    
     override func viewDidLoad() {
         super.viewDidLoad()
+       
+         btnDealer.backgroundColor = UIColor(red: 82/255, green: 98/255, blue: 133/255, alpha: 1)
+        var order = UserDefaults.standard.bool(forKey: "order")
+        print("Order : \(order)")
+        if (order == true){
+            btnPartner.backgroundColor = UIColor.clear
+            btnDealer.backgroundColor = UIColor.clear
+            btnOrder.backgroundColor = UIColor(red: 82/255, green: 98/255, blue: 133/255, alpha: 1)
+             print("Order : \(order)")
+            orderSummaryList.removeAll()
+            getOrederSummary()
+            isDealerClick = false
+            ispartnerclick=false
+            isOrderClick=true
+            myTablview.reloadData()
+        }else{
+            
+            myTablview.backgroundView = noItemsView
+            noItemsView.isHidden = true
+            
+            self.isDealerClick = true
+            getDealerProduct()
+            View3.isHidden = false
+        }
         
-         self.isDealerClick = true
-        getDealerProduct()
         
-        
-        View3.isHidden = false
     }
+    override func viewWillAppear(_ animated: Bool) {
+         getMyCartListCount()
+    }
+    
+
+    override func viewWillDisappear(_ animated: Bool) {
+       var order = UserDefaults.standard.bool(forKey: "order")
+        if (order.description.isEmpty){
+            print("Empty")
+        }else{
+            UserDefaults.standard.removeObject(forKey: "order")
+        }
+        
+    }
+    
+    func noData(){
+        if myTablview.visibleCells.isEmpty{
+            noItemsView.isHidden = false
+        }else {
+            noItemsView.isHidden = true
+        }
+    }
+    
     var ispartnerclick=false
     @IBAction func btnpartner(_ sender: Any) {
+        btnPartner.backgroundColor = UIColor(red: 82/255, green: 98/255, blue: 133/255, alpha: 1)
+        btnDealer.backgroundColor = UIColor.clear
+        btnOrder.backgroundColor = UIColor.clear
         dealerProductList.removeAll()
         getPartnerProduct()
         ispartnerclick=true
@@ -41,6 +96,10 @@ import Toast_Swift
     
     var isDealerClick=false
     @IBAction func btnDealer(_ sender: Any) {
+        
+        btnPartner.backgroundColor = UIColor.clear
+        btnDealer.backgroundColor = UIColor(red: 82/255, green: 98/255, blue: 133/255, alpha: 1)
+        btnOrder.backgroundColor = UIColor.clear
    
         dealerProductList.removeAll()
         getDealerProduct()
@@ -53,6 +112,10 @@ import Toast_Swift
     }
     var isOrderClick=false
     @IBAction func btnOrder(_ sender: Any) {
+        
+        btnPartner.backgroundColor = UIColor.clear
+        btnDealer.backgroundColor = UIColor.clear
+        btnOrder.backgroundColor = UIColor(red: 82/255, green: 98/255, blue: 133/255, alpha: 1)
         orderSummaryList.removeAll()
         getOrederSummary()
         isDealerClick = false
@@ -195,7 +258,7 @@ import Toast_Swift
             let CouponCell = Bundle.main.loadNibNamed("CouponCell", owner: self, options: nil)?.first as! CouponCell
              CouponCell.lblCouponName.text = CouponList[indexPath.row].couponName
              CouponCell.lblCouponCode.text = CouponList[indexPath.row].couponCode
-             CouponCell.lblExpirydate.text = "Expiry Date" + CouponList[indexPath.row].expiryDate
+            CouponCell.lblExpirydate.text = "Expiry Date : " + CouponList[indexPath.row].expiryDate
             return CouponCell
         case 2:
             let VoucherCell = Bundle.main.loadNibNamed("VoucherCell", owner: self, options: nil)?.first as! VoucherCell
@@ -270,7 +333,7 @@ import Toast_Swift
                 
             }
         case 1:
-            return 280.0
+            return 190.0
             
         case 2:
            
@@ -285,6 +348,7 @@ import Toast_Swift
     
 /*****************Function Start to Get Order Summary *****************///////////
      @objc func getOrederSummary(){
+        self.view.makeToastActivity(.center)
         let token : String = UserDefaults.standard.string(forKey: "token")!
         let loyaltyId : String = UserDefaults.standard.string(forKey: "loyaltyId")!
         
@@ -296,6 +360,7 @@ import Toast_Swift
             //Response Success
             switch response.result {
             case .success (let value):let json = JSON(value)
+            self.view.hideToastActivity()
             print("JSON: \(json)")
             let status = json["status"].stringValue
             if (status == WebUrl.SUCCESS_CODE){
@@ -316,12 +381,14 @@ import Toast_Swift
                     }
                     
                     self.myTablview.reloadData()
+                    self.noData()
                     
                 }
                 }
                 
             //Network Error
             case .failure (let error):
+                self.view.hideToastActivity()
                 self.view.makeToast("Network Error")
             }
         }
@@ -331,6 +398,7 @@ import Toast_Swift
     
 /*****************Function Start to Get Partner Products *****************///////////
     @objc func getPartnerProduct(){
+        self.view.makeToastActivity(.center)
         let token : String = UserDefaults.standard.string(forKey: "token")!
         
         // Parameters
@@ -341,6 +409,7 @@ import Toast_Swift
             //Response Success
             switch response.result {
             case .success (let value):let json = JSON(value)
+            self.view.hideToastActivity()
             print("JSON: \(json)")
             let status = json["status"].stringValue
             if (status == WebUrl.SUCCESS_CODE){
@@ -366,12 +435,14 @@ import Toast_Swift
                     }
                     
                     self.myTablview.reloadData()
+                    self.noData()
                     
                 }
                 }
                 
             //Network Error
             case .failure (let error):
+                self.view.hideToastActivity()
                 self.view.makeToast("Network Error")
             }
         }
@@ -381,6 +452,7 @@ import Toast_Swift
     
 /*****************Function Start to Get Dealer Products *****************///////////
     @objc func getDealerProduct(){
+        self.view.makeToastActivity(.center)
         let token : String = UserDefaults.standard.string(forKey: "token")!
         
         
@@ -392,6 +464,7 @@ import Toast_Swift
             //Response Success
             switch response.result {
             case .success (let value):let json = JSON(value)
+            self.view.hideToastActivity()
             print("JSON: \(json)")
             let status = json["status"].stringValue
             if (status == WebUrl.SUCCESS_CODE){
@@ -417,12 +490,14 @@ import Toast_Swift
                     }
                    
                     self.myTablview.reloadData()
+                    self.noData()
                     
                 }
                 }
                 
             //Network Error
             case .failure (let error):
+                self.view.hideToastActivity()
                 self.view.makeToast("Network Error")
             }
         }
@@ -431,6 +506,7 @@ import Toast_Swift
     
 /*****************Function Start to Get Dealer Products *****************///////////
     @objc func getCoupons(){
+        self.view.makeToastActivity(.center)
         let token : String = UserDefaults.standard.string(forKey: "token")!
         let loyaltyId : String = UserDefaults.standard.string(forKey: "loyaltyId")!
         
@@ -442,6 +518,7 @@ import Toast_Swift
             //Response Success
             switch response.result {
             case .success (let value):let json = JSON(value)
+            self.view.hideToastActivity()
             print("JSON: \(json)")
             let status = json["status"].stringValue
             if (status == WebUrl.SUCCESS_CODE){
@@ -469,12 +546,14 @@ import Toast_Swift
                     }
                     
                     self.myTablview.reloadData()
+                    self.noData()
                     
                 }
             }
                 
             //Network Error
             case .failure (let error):
+                self.view.hideToastActivity()
                 self.view.makeToast("Network Error")
             }
         }
@@ -485,6 +564,7 @@ import Toast_Swift
     
 /*****************Function Start to Get Dealer Products *****************///////////
     @objc func getVoucher(){
+        self.view.makeToastActivity(.center)
         let token : String = UserDefaults.standard.string(forKey: "token")!
         let loyaltyId : String = UserDefaults.standard.string(forKey: "loyaltyId")!
         
@@ -496,6 +576,7 @@ import Toast_Swift
             //Response Success
             switch response.result {
             case .success (let value):let json = JSON(value)
+            self.view.hideToastActivity()
             print("JSON: \(json)")
             let status = json["status"].stringValue
             if (status == WebUrl.SUCCESS_CODE){
@@ -523,8 +604,45 @@ import Toast_Swift
                     }
                     
                     self.myTablview.reloadData()
+                    self.noData()
                     
                 }
+                }
+                
+            //Network Error
+            case .failure (let error):
+                self.view.hideToastActivity()
+                self.view.makeToast("Network Error")
+            }
+        }
+    }
+    
+    func getMyCartListCount()
+    {
+        self.view.makeToastActivity(.center)
+        let token : String = UserDefaults.standard.string(forKey: "token")!
+        let loyaltyId : String = UserDefaults.standard.string(forKey: "loyaltyId")!
+        
+        // Parameters
+        let parameters: [String: Any] = ["loyaltyId":loyaltyId]
+        
+        //Alamofire Request
+        Alamofire.request(WebUrl.CART_LIST_URL+"?token="+UserDefaults.standard.string(forKey: "token")!, method: .post,parameters: parameters, encoding: JSONEncoding.default).validate().responseJSON { response in
+            //Response Success
+            switch response.result {
+            case .success (let value):let json = JSON(value)
+            self.view.hideToastActivity()
+            print("Track Referal JSON: \(json)")
+            let status = json["status"].stringValue
+            if (status == WebUrl.SUCCESS_CODE){
+                UserDefaults.standard.set(String(describing: json), forKey: "cartData") //setObject
+                let data = json["data"].array
+                for i in data! {
+                    let myTrackRefList = JSON(i)
+                    self.productList = myTrackRefList["productList"].array
+                }
+                print("productList : \(self.productList?.count)")
+                self.rightBarButton.badgeValue = (self.productList?.count)!
                 }
                 
             //Network Error

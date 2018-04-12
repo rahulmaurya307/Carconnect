@@ -11,13 +11,27 @@ class UsedCarViewController: UIViewController,UITableViewDelegate, UITableViewDa
     var selectedMenuItem : Int = 0
     var usedCarList : [UsedCar] = [UsedCar]()
     @IBOutlet var tableView2: UITableView!
+    @IBOutlet var noItemsView: UIView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView2.backgroundView = noItemsView
+        noItemsView.isHidden = true
+        
         getUsedCarList()
         self.sideMenuController()?.sideMenu?.delegate = MySideMenu()
     }
+   
+    func noData(){
+        tableView2.separatorStyle = .none
+        if tableView2.visibleCells.isEmpty{
+            noItemsView.isHidden = false
+        }else {
+            noItemsView.isHidden = true
+        }
+    }
 func getUsedCarList() {
+    self.view.makeToastActivity(.center)
     let token : String = UserDefaults.standard.string(forKey: "token")!
     
     // Parameters
@@ -29,16 +43,19 @@ func getUsedCarList() {
         /*****************Response Success *****************/
         switch response.result {
         case .success (let value):let json = JSON(value)
+        self.view.hideToastActivity()
         print("JSON: \(json)")
         let status = json["status"].stringValue
         if (status == WebUrl.SUCCESS_CODE){
             let data = json["data"].array
+            if (data?.isEmpty)!
+            {
+                
+                self.noData()
+            }
             
             for i in data! {
                 let usedcarList = i["usedcarList"].array // Read Json Object
-                
-                
-                
                 
                 for dataModel in usedcarList! {      // Parse Json Array
                    let modelName = dataModel["modelName"].stringValue
@@ -70,17 +87,15 @@ func getUsedCarList() {
 
                     
                     self.usedCarList.append(UsedCar(modelName: modelName, state: state, carId: carId, updated_at: updated_at, vehicleImages2: vehicleImages2, variantName: variantName, kmsdriven: kmsdriven, brandName: brandName, color: color, carStatus: carStatus, status: status, updatedBy: updatedBy, updatedType: updatedType, id: id, vehicleImages1: myimage, vehicleImages3: vehicleImages3, created_at: created_at, modelYear: modelYear, owner: owner, price: price, comment: comment, dealerId: dealerId, registration: registration))
-                    
-                    
                 }
-                
-                self.tableView2.reloadData()
-                
             }
-            }
+            self.tableView2.reloadData()
+            self.noData()
+        }
             
             /***************** Network Error *****************/
         case .failure (let error):
+            self.view.hideToastActivity()
             self.view.makeToast("Network Error")
         }
     }
@@ -122,7 +137,6 @@ func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> U
         let SecVC = self.storyboard?.instantiateViewController(withIdentifier: "UsedCarDetailViewController") as! UsedCarDetailViewController
         SecVC.usedCarID = usedCarList[indexPath.row].id
         self.present(SecVC, animated: true, completion: nil)
-       
    
     }
     

@@ -7,13 +7,16 @@ import AlamofireImage
 
 
 class MyRewardsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+    @IBOutlet var btnReferalprog: UIButton!
+    @IBOutlet var btnReferalTrack: UIButton!
+    @IBOutlet var btnPartner: UIButton!
+    @IBOutlet var btnDealer: UIButton!
     @IBOutlet weak var lblTotalPoint: UILabel!
+    @IBOutlet var noItemsView : UIView!
     var pointHistoryList : [PointsModel] = [PointsModel]()
     var ReferalHistoryList : [ReferalModel] = [ReferalModel]()
     var trackReferalsList : [TrackReferals] = [TrackReferals]()
     var dealerOfferList : [DealerModel] = [DealerModel]()
-    
-    
     
     @IBOutlet weak var view1: UIView!
     @IBOutlet weak var View3: UIView!
@@ -26,10 +29,13 @@ class MyRewardsViewController: UIViewController, UITableViewDataSource, UITableV
     @IBAction func btnHomeToggle(_ sender: Any) {
         toggleSideMenuView()
     }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-       
+        btnDealer.backgroundColor =  UIColor(red: 82/255, green: 98/255, blue: 133/255, alpha: 1)
+        btnReferalprog.backgroundColor = UIColor(red: 82/255, green: 98/255, blue: 133/255, alpha: 1)
+        myTablview.backgroundView = noItemsView
+        noItemsView.isHidden = true
         
         getTotalPoint()   // get Available point
         getPointHistory()  // get Point history
@@ -37,6 +43,14 @@ class MyRewardsViewController: UIViewController, UITableViewDataSource, UITableV
         View2.isHidden = true
         View3.isHidden = true
         
+        
+    }
+    func noData(){
+        if myTablview.visibleCells.isEmpty{
+            noItemsView.isHidden = false
+        }else {
+            noItemsView.isHidden = true
+        }
     }
     
     //Partner Button Click
@@ -47,15 +61,17 @@ class MyRewardsViewController: UIViewController, UITableViewDataSource, UITableV
     
     @IBAction func btnpartner(_ sender: Any) {
         
+        btnPartner.backgroundColor =  UIColor(red: 82/255, green: 98/255, blue: 133/255, alpha: 1)
+        btnDealer.backgroundColor = UIColor.clear
         dealerOfferList.removeAll()
         getPartnerOffersList()
         ispartnerclick=true
         isDealerClick=false
         isReferralClick=false
         isTrackClick=false
-        
-        lblDealer.isHidden = true
-        lblPartner.isHidden = false
+//
+//        lblDealer.isHidden = true
+//        lblPartner.isHidden = false
         
         print("Button Partner CLick")
         myTablview.reloadData()
@@ -64,6 +80,7 @@ class MyRewardsViewController: UIViewController, UITableViewDataSource, UITableV
     //Dealer Button Click
     
     @IBAction func btnDealer(_ sender: Any) {
+        
         isDealerClick = true
         ispartnerclick=false
         isReferralClick=false
@@ -71,8 +88,14 @@ class MyRewardsViewController: UIViewController, UITableViewDataSource, UITableV
         
         dealerOfferList.removeAll()
         getDealerOffersList()
-        lblDealer.isHidden = false
-        lblPartner.isHidden = true
+        
+        btnPartner.backgroundColor = UIColor.clear
+        btnDealer.backgroundColor = UIColor(red: 82/255, green: 98/255, blue: 133/255, alpha: 1)
+        
+        
+//        lblDealer.isHidden = false
+//        lblPartner.isHidden = true
+        
         
         print("Button Dealer CLick")
         myTablview.reloadData()
@@ -81,6 +104,10 @@ class MyRewardsViewController: UIViewController, UITableViewDataSource, UITableV
     //Referal Button Click
     
     @IBAction func btnReferral(_ sender: Any) {
+        
+        btnReferalprog.backgroundColor = UIColor(red: 82/255, green: 98/255, blue: 133/255, alpha: 1)
+        btnReferalTrack.backgroundColor = UIColor.clear
+        
         isReferralClick = true
         isTrackClick=false
         ispartnerclick=false
@@ -94,6 +121,9 @@ class MyRewardsViewController: UIViewController, UITableViewDataSource, UITableV
     //Track Button Click
     
     @IBAction func btnTrack(_ sender: Any) {
+        
+        btnReferalprog.backgroundColor = UIColor.clear
+        btnReferalTrack.backgroundColor = UIColor(red: 82/255, green: 98/255, blue: 133/255, alpha: 1)
         isTrackClick = true
         isReferralClick=false
         ispartnerclick=false
@@ -109,6 +139,7 @@ class MyRewardsViewController: UIViewController, UITableViewDataSource, UITableV
         switch (mySegmentControll.selectedSegmentIndex) {
         case 0:
             myTablview.reloadData()
+            self.noData()
             view1.isHidden = false
             View2.isHidden = true
             View3.isHidden = true
@@ -119,6 +150,8 @@ class MyRewardsViewController: UIViewController, UITableViewDataSource, UITableV
             isTrackClick=false
             break
         case 1:
+            btnReferalprog.backgroundColor = UIColor(red: 82/255, green: 98/255, blue: 133/255, alpha: 1)
+            btnReferalTrack.backgroundColor = UIColor.clear
             ReferalHistoryList.removeAll()
             getReferalProgramList()
             myTablview.reloadData()
@@ -135,6 +168,8 @@ class MyRewardsViewController: UIViewController, UITableViewDataSource, UITableV
             break
             
         case 2:
+            btnPartner.backgroundColor = UIColor.clear
+            btnDealer.backgroundColor = UIColor(red: 82/255, green: 98/255, blue: 133/255, alpha: 1)
             dealerOfferList.removeAll()
             getDealerOffersList()
             myTablview.reloadData()
@@ -143,8 +178,8 @@ class MyRewardsViewController: UIViewController, UITableViewDataSource, UITableV
             View2.isHidden = true
             View3.isHidden = false
             
-            lblDealer.isHidden = true
-            lblPartner.isHidden = true
+//            lblDealer.isHidden = true
+//            lblPartner.isHidden = true
             
             isDealerClick=true
             ispartnerclick=false
@@ -423,6 +458,7 @@ class MyRewardsViewController: UIViewController, UITableViewDataSource, UITableV
     
     ///////////*****************Function Start to Get Total Points *****************///////////
     func getTotalPoint(){
+        self.view.makeToastActivity(.center)
         let token : String = UserDefaults.standard.string(forKey: "token")!
         let loyaltyId : String = UserDefaults.standard.string(forKey: "loyaltyId")!
         
@@ -436,6 +472,7 @@ class MyRewardsViewController: UIViewController, UITableViewDataSource, UITableV
             //Response Success
             switch response.result {
             case .success (let value):let json = JSON(value)
+            self.view.hideToastActivity()
             print("JSON: \(json)")
             let status = json["status"].stringValue
             if (status == WebUrl.SUCCESS_CODE){
@@ -444,6 +481,7 @@ class MyRewardsViewController: UIViewController, UITableViewDataSource, UITableV
                     let balancePoint = i["balancePoint"] .stringValue
                     self.lblTotalPoint.text = "Your Available Point : \(balancePoint)"
                 }
+                self.noData()
                 }
             //Network Error
             case .failure (let error):
@@ -458,6 +496,7 @@ class MyRewardsViewController: UIViewController, UITableViewDataSource, UITableV
     
     ///////////*****************Function Start to Get Points History *****************/
     func getPointHistory(){
+        self.view.makeToastActivity(.center)
         var isExpire : Bool!
         var pendingStatus : Bool!
         let token : String = UserDefaults.standard.string(forKey: "token")!
@@ -473,6 +512,7 @@ class MyRewardsViewController: UIViewController, UITableViewDataSource, UITableV
             //Response Success
             switch response.result {
             case .success (let value):let json = JSON(value)
+            self.view.hideToastActivity()
             print("JSON: \(json)")
             let status = json["status"].stringValue
             if (status == WebUrl.SUCCESS_CODE){
@@ -540,11 +580,13 @@ class MyRewardsViewController: UIViewController, UITableViewDataSource, UITableV
                         
                     }
                     self.myTablview.reloadData()
+                    self.noData()
                 }
                 }
                 
             //Network Error
             case .failure (let error):
+                self.view.hideToastActivity()
                 self.view.makeToast("Network Error")
             }
         }
@@ -558,6 +600,7 @@ class MyRewardsViewController: UIViewController, UITableViewDataSource, UITableV
     /*****************Function Start to Referal List *****************///////////
     
     func getReferalProgramList(){
+        self.view.makeToastActivity(.center)
         let token : String = UserDefaults.standard.string(forKey: "token")!
         
         // Parameters
@@ -568,6 +611,7 @@ class MyRewardsViewController: UIViewController, UITableViewDataSource, UITableV
             //Response Success
             switch response.result {
             case .success (let value):let json = JSON(value)
+            self.view.hideToastActivity()
             print("JSON: \(json)")
             let status = json["status"].stringValue
             if (status == WebUrl.SUCCESS_CODE){
@@ -587,12 +631,14 @@ class MyRewardsViewController: UIViewController, UITableViewDataSource, UITableV
                     }
                     
                     self.myTablview.reloadData()
+                    self.noData()
                     
                 }
                 }
                 
             //Network Error
             case .failure (let error):
+                self.view.hideToastActivity()
                 self.view.makeToast("Network Error")
             }
         }
@@ -604,6 +650,7 @@ class MyRewardsViewController: UIViewController, UITableViewDataSource, UITableV
     /*****************Function Start to Get Track Referal *****************///////////
     
     func getTrackReferalList(){
+        self.view.makeToastActivity(.center)
         let token : String = UserDefaults.standard.string(forKey: "token")!
         let loyaltyId : String = UserDefaults.standard.string(forKey: "loyaltyId")!
         
@@ -615,6 +662,7 @@ class MyRewardsViewController: UIViewController, UITableViewDataSource, UITableV
             //Response Success
             switch response.result {
             case .success (let value):let json = JSON(value)
+            self.view.hideToastActivity()
             print("Track Referal JSON: \(json)")
             let status = json["status"].stringValue
             if (status == WebUrl.SUCCESS_CODE){
@@ -641,10 +689,12 @@ class MyRewardsViewController: UIViewController, UITableViewDataSource, UITableV
                 
                 
                 self.myTablview.reloadData()
+                self.noData()
                 }
                 
             //Network Error
             case .failure (let error):
+                self.view.hideToastActivity()
                 self.view.makeToast("Network Error")
             }
         }
@@ -656,6 +706,9 @@ class MyRewardsViewController: UIViewController, UITableViewDataSource, UITableV
     /*****************Function Start to Get Dealer Offers List *****************///////////
     
     func getDealerOffersList(){
+        
+        self.view.makeToastActivity(.center)
+        
         let token : String = UserDefaults.standard.string(forKey: "token")!
         
         // Parameters
@@ -666,6 +719,7 @@ class MyRewardsViewController: UIViewController, UITableViewDataSource, UITableV
             //Response Success
             switch response.result {
             case .success (let value):let json = JSON(value)
+            self.view.hideToastActivity()
             print("Track Referal JSON: \(json)")
             let status = json["status"].stringValue
             if (status == WebUrl.SUCCESS_CODE){
@@ -688,10 +742,12 @@ class MyRewardsViewController: UIViewController, UITableViewDataSource, UITableV
                     
                 }
                 self.myTablview.reloadData()
+                self.noData()
                 }
                 
             //Network Error
             case .failure (let error):
+                self.view.hideToastActivity()
                 self.view.makeToast("Network Error")
             }
         }
@@ -703,6 +759,7 @@ class MyRewardsViewController: UIViewController, UITableViewDataSource, UITableV
     /*****************Function Start to Get Partner Offers List *****************///////////
     
     func getPartnerOffersList(){
+        self.view.makeToastActivity(.center)
         let token : String = UserDefaults.standard.string(forKey: "token")!
         
         // Parameters
@@ -713,9 +770,11 @@ class MyRewardsViewController: UIViewController, UITableViewDataSource, UITableV
             //Response Success
             switch response.result {
             case .success (let value):let json = JSON(value)
+            self.view.hideToastActivity()
             print("Track Referal JSON: \(json)")
             let status = json["status"].stringValue
             if (status == WebUrl.SUCCESS_CODE){
+                
                 let data = json["data"].array
                 
                 for i in data! {
@@ -734,11 +793,15 @@ class MyRewardsViewController: UIViewController, UITableViewDataSource, UITableV
                     }
                     
                 }
+                
                 self.myTablview.reloadData()
+                self.noData()
+                
                 }
                 
             //Network Error
             case .failure (let error):
+                self.view.hideToastActivity()
                 self.view.makeToast("Network Error")
             }
         }

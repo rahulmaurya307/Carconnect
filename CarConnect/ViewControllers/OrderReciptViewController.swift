@@ -9,6 +9,7 @@ protocol RecProcDelegate {
 }
 
 class OrderReciptViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+    @IBOutlet var cnstrntTableView: NSLayoutConstraint!
     var OrderDetailList : [OrderDetailModel] = [OrderDetailModel]()
     var orderID : String!
     
@@ -51,13 +52,24 @@ class OrderReciptViewController: UIViewController, UITableViewDelegate, UITableV
         
         lblOrderID.text = "Your Order ID is : " + UserDefaults.standard.string(forKey: "orderId")!
     }
+    
+    func UITableView_Auto_Height()
+    {
+        if(self.myTableView.contentSize.height < self.myTableView.frame.height){
+            cnstrntTableView.constant = self.myTableView.contentSize.height
+        }
+    }
+    override func viewDidAppear (_ animated: Bool) {
+        UITableView_Auto_Height();
+    }
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
     @IBAction func btnOk(_ sender: Any) {
         UserDefaults.standard.removeObject(forKey: "data")
         UserDefaults.standard.removeObject(forKey: "cartData")
-        AppDelegate.getDelegate().resetView()
+        AppDelegate.getDelegate().resetView3()
+       UserDefaults.standard.set(true, forKey: "order")
         
     }
     
@@ -78,12 +90,8 @@ class OrderReciptViewController: UIViewController, UITableViewDelegate, UITableV
         
     }
     
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
-    {
-        return 100;//Choose your custom row height
-    }
-    
     func checkOutAction(jsonData : String){
+        self.view.makeToastActivity(.center)
         let json = JSON.init(parseJSON: jsonData)
         print("My Json Data: \(json)")
         let data = json["data"].array!
@@ -149,10 +157,12 @@ class OrderReciptViewController: UIViewController, UITableViewDelegate, UITableV
         self.lblTotalPaidAmounts.text = "₹ " + String(self.paidamount)
         self.lblTotalEarnedAmounts.text = String(self.earnPoint)
         self.myTableView.reloadData()
+        self.view.hideToastActivity()
     }
     
     func getMyCartList(jsonData2 : String)
     {
+        self.view.makeToastActivity(.center)
         let json = JSON.init(parseJSON: jsonData2)
         let data = json["data"].array
         for i in data! {
@@ -186,8 +196,8 @@ class OrderReciptViewController: UIViewController, UITableViewDelegate, UITableV
             }
             
         }
-        
         self.myTableView.reloadData()
+        self.view.hideToastActivity()
         
         
     }

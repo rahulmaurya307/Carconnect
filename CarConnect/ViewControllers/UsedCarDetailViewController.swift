@@ -72,7 +72,7 @@ class UsedCarDetailViewController: UIViewController {
     }
     
 @objc func getUSedCarDetail(){
-        
+    self.view.makeToastActivity(.center)
         let token : String = UserDefaults.standard.string(forKey: "token")!
         
         // Parameters
@@ -85,6 +85,7 @@ class UsedCarDetailViewController: UIViewController {
             /*****************Response Success *****************/
             switch response.result {
             case .success (let value):let json = JSON(value)
+            self.view.hideToastActivity()
             print("JSON: \(json)")
             let status = json["status"].stringValue
             if (status == WebUrl.SUCCESS_CODE){
@@ -153,6 +154,7 @@ class UsedCarDetailViewController: UIViewController {
                 
                 /***************** Network Error *****************/
             case .failure (let error):
+                self.view.hideToastActivity()
                 self.view.makeToast("Network Error")
             }
         }
@@ -186,6 +188,7 @@ class UsedCarDetailViewController: UIViewController {
                 
                 /***************** Network Error *****************/
             case .failure (let error):
+                self.view.hideToastActivity()
                 self.view.makeToast("Network Error")
                 self.intrestStatus = "1"
             }

@@ -45,7 +45,7 @@ class BrandSpecificationViewController: UIViewController,UITableViewDelegate, UI
     }
    
     @IBAction func BackBtn(_ sender: Any) {
-        self.dismiss(animated: false, completion: nil)
+        self.dismiss(animated: true, completion: nil)
         
     }
     
@@ -170,7 +170,7 @@ func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> 
     }
     
     @objc func varientSpecification(){
-        
+        self.view.makeToastActivity(.center)
         let token : String = UserDefaults.standard.string(forKey: "token")!
         // Parameters
         let parameters: [String: Any] = ["varientId":varientId!]
@@ -184,6 +184,7 @@ func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> 
             
             switch response.result {
             case .success (let value):let json = JSON(value)
+            self.view.hideToastActivity()
             print("JSON: \(json)")
             let status = json["status"].stringValue
             if (status == WebUrl.SUCCESS_CODE){
@@ -196,8 +197,8 @@ func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> 
                     {
                         // Overview Array
                         let overViewData = specificationList[0] as JSON
-                        let overViewArray = overViewData["subGroup"].array!
-                        for i in overViewArray {
+                        let overViewArray = overViewData["subGroup"].array
+                        for i in overViewArray! {
                             var specName = i["specificationName"].stringValue
                             var value = i["value"].stringValue
                         
@@ -252,6 +253,7 @@ func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> 
                 
                 /***************** Network Error *****************/
             case .failure (let error):
+                self.view.hideToastActivity()
                 self.view.makeToast("Network Error")
             }
         }

@@ -5,7 +5,8 @@ import AlamofireImage
 import SwiftyJSON
 import Toast_Swift
 
-class BookTestDriveViewController: UIViewController {
+class BookTestDriveViewController: UIViewController,UIPickerViewDelegate,UIPickerViewDataSource {
+   
     var carId : String!
     var myDateTime : String!
     var finalDate : String!
@@ -15,6 +16,10 @@ class BookTestDriveViewController: UIViewController {
     @IBOutlet var txtFldDate: UITextField!
     var datePicker : UIDatePicker = UIDatePicker()
     @IBOutlet var txtFldEmail: UITextField!
+    @IBOutlet var txtFldLoc: UITextField!
+    var cityPicker = UIPickerView ()
+    var selectCity = [String?]()
+    var selectState = [String?]()
    
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,6 +27,29 @@ class BookTestDriveViewController: UIViewController {
         txtFldEmail.text = UserDefaults.standard.string(forKey: "email")
         txtFldMobNo.text = UserDefaults.standard.string(forKey: "mobile")
         
+        cityPicker.delegate = self
+        cityPicker.dataSource = self
+        txtFldLoc.inputView = cityPicker
+        
+        getLocationList()
+        
+    }
+    
+    
+    public func numberOfComponents(in pickerView:  UIPickerView) -> Int  {
+        return 1
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+            return selectCity.count
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+            return selectCity[row]
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        txtFldLoc.text = selectCity[row]
     }
     
 func pickUpDate(_ textField : UITextField){
@@ -37,7 +65,7 @@ func pickUpDate(_ textField : UITextField){
         let toolBar = UIToolbar()
         toolBar.barStyle = .default
         toolBar.isTranslucent = true
-        toolBar.tintColor = UIColor(red: 92/255, green: 216/255, blue: 255/255, alpha: 1)
+        toolBar.tintColor = UIColor.darkGray
         toolBar.sizeToFit()
     
     
@@ -91,15 +119,16 @@ func textFieldDidBeginEditing(_ textField: UITextField) {
     }
     
     @IBAction func backBtn (_ sender: UIBarButtonItem) {
-        self.dismiss(animated: false, completion: nil)
+        self.dismiss(animated: true, completion: nil)
     }
     
 func submitTestDriveDetails (){
+    self.view.makeToastActivity(.center)
       print("Book Your Test Drive Function")
         let token : String = UserDefaults.standard.string(forKey: "token")!
         
         // Parameters
-        let parameters: [String: Any] = ["modelId" : carId,"custName" : txtFldName.text,"custEmail" : txtFldEmail.text,"custContact" : txtFldMobNo.text,"bookdate" : finalDate,"booktime" : finalTime,]
+        let parameters: [String: Any] = ["modelId" : carId,"custName" : txtFldName.text,"custEmail" : txtFldEmail.text,"custContact" : txtFldMobNo.text,"bookdate" : finalDate,"booktime" : finalTime,"location" : txtFldLoc.text]
         
         //Alamofire Request
         Alamofire.request(WebUrl.BOOK_TEST_DRIVE_URL+"?token="+token, method: .post,parameters: parameters, encoding: JSONEncoding.default).validate().responseJSON { response in
@@ -108,6 +137,7 @@ func submitTestDriveDetails (){
             /*****************Response Success *****************/
             switch response.result {
             case .success (let value):let json = JSON(value)
+            self.view.hideToastActivity()
             print("JSON: \(json)")
             let status = json["status"].stringValue
             if (status == WebUrl.SUCCESS_CODE){
@@ -115,8 +145,59 @@ func submitTestDriveDetails (){
                 }
                 /***************** Network Error *****************/
             case .failure (let error):
+                self.view.hideToastActivity()
                 self.view.makeToast("Network Error")
             }
         }
+    }
+
+    func getLocationList(){
+        self.view.makeToastActivity(.center)
+        let token : String = UserDefaults.standard.string(forKey: "token")!
+        
+        // Parameters
+        let parameters: [String: Any] = ["":""]
+        
+        //Alamofire Request
+        Alamofire.request(WebUrl.LOCATION+"?token="+token, method: .post,parameters: parameters, encoding: JSONEncoding.default).validate().responseJSON { response in
+            // print("NewCarJsonResponse: \(response.result)")
+            
+            /*****************Response Success *****************/
+            switch response.result {
+            case .success (let value):let json = JSON(value)
+            self.view.hideToastActivity()
+            print("JSON: \(json)")
+            let status = json["status"].stringValue
+            if (status == WebUrl.SUCCESS_CODE){
+                let data = json["data"].array
+                
+                for i in data! {
+                    //let newCarList = i["newcarList"] as JSON // Read Json Object
+                    let locationList = i["locationList"].array
+                    
+                    for dataModel in locationList! {      // Parse Json Array
+                        let city = dataModel["city"].stringValue
+                        let state = dataModel["state"].stringValue
+                        let dealerName = dataModel["dealerName"].stringValue
+                        print("city : \(city)")
+                        print("state : \(state)")
+                        print("dealerName : \(dealerName)")
+                        
+                        self.selectCity.append(city)
+                        self.selectState.append(state)
+                        
+//                        self.locationList.append(LocationModel(dealerName: dealerName, city: city, state: state))
+                    }
+                }
+                }
+                /***************** Network Error *****************/
+            case .failure (let error):
+                self.view.hideToastActivity()
+                self.view.makeToast("Network Error")
+            }
+        }
+        
+        
+        
     }
 }

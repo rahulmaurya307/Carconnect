@@ -16,16 +16,27 @@ class MyCarsViewController: UIViewController,UITableViewDelegate, UITableViewDat
     var selectedMenuItem : Int = 0
     //var arrayofcelldata2 = [CellData2]()
     @IBOutlet var tableView2: UITableView!
+     @IBOutlet var noItemsView : UIView!
     var myList : [MyCars] = [MyCars]()
     
         override func viewDidLoad() {
         super.viewDidLoad()
+            tableView2.backgroundView = noItemsView
+            noItemsView.isHidden = true
         getMyCarList()
         self.sideMenuController()?.sideMenu?.delegate = MySideMenu()
     }
-   
+    func noData(){
+        if tableView2.visibleCells.isEmpty{
+            noItemsView.isHidden = false
+        }else {
+            noItemsView.isHidden = true
+        }
+    }
+
     
 func getMyCarList(){
+    self.view.makeToastActivity(.center)
     let userId : String = UserDefaults.standard.string(forKey: "userId")!
     let mobile : String = UserDefaults.standard.string(forKey: "mobile")!
     
@@ -40,6 +51,7 @@ func getMyCarList(){
             switch response.result {
     
             case .success (let value):let json = JSON(value)
+            self.view.hideToastActivity()
             print("JSON: \(json)")
             let status = json["status"].stringValue
             if (status == WebUrl.SUCCESS_CODE){
@@ -76,12 +88,14 @@ func getMyCarList(){
                                     }
                     
                     self.tableView2.reloadData()
+                    self.noData()
 
                 }
             }
                 
 /***************** Network Error *****************/
             case .failure (let error):
+                self.view.hideToastActivity()
                 self.view.makeToast("Network Error")
             }
         }
@@ -122,7 +136,6 @@ func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         MyCarsVC.modelName = myList[indexPath.row].modelName
         MyCarsVC.image1 = myList[indexPath.row].modelImage
        self.present(MyCarsVC, animated: true, completion: nil)
-    
     
 }
     }
