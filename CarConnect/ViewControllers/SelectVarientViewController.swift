@@ -102,6 +102,9 @@ class SelectVarientViewController: UIViewController,UITableViewDelegate, UITable
         AppDelegate.getDelegate().resetView2()
         
     }
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
 
     @IBAction func backBtn (_ sender: UIBarButtonItem) {
         self.dismiss(animated: false, completion: nil)

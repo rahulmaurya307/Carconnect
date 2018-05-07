@@ -22,10 +22,15 @@ class Payment: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         print("paymentvc reservationId : \(reservationId)")
+        print("toatl PaybleAmount : \(toatlPaybleAmount)")
         
+    }
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
     }
     
     @IBAction func btnBack(_ sender: Any) {
+        toatlPaybleAmount = String(0)
         self.dismiss(animated: true, completion: nil)
     }
     @IBAction func btnPayment(_ sender: Any) {

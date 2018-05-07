@@ -37,6 +37,9 @@ class NewCarsViewController: UIViewController,UITableViewDelegate, UITableViewDa
             noItemsView.isHidden = true
         }
     }
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
     
     func getNewCarList(){
         self.view.makeToastActivity(.center)

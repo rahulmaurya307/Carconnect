@@ -34,6 +34,9 @@ class BookTestDriveViewController: UIViewController,UIPickerViewDelegate,UIPicke
         getLocationList()
         
     }
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
     
     
     public func numberOfComponents(in pickerView:  UIPickerView) -> Int  {
@@ -78,7 +81,7 @@ func pickUpDate(_ textField : UITextField){
         textField.inputAccessoryView = toolBar
     }
     
-func doneClick() {
+    @objc func doneClick() {
         let dateFormatter = DateFormatter()
         dateFormatter.dateStyle = .medium
         dateFormatter.timeStyle = .medium
@@ -94,11 +97,11 @@ func doneClick() {
     }
     
     
-func cancelClick() {
+@objc func cancelClick() {
         txtFldDate.resignFirstResponder()
     }
     
-func textFieldDidBeginEditing(_ textField: UITextField) {
+@objc func textFieldDidBeginEditing(_ textField: UITextField) {
         self.pickUpDate(self.txtFldDate)
     }
   
@@ -113,9 +116,6 @@ func textFieldDidBeginEditing(_ textField: UITextField) {
             print("Book Your Test Drive")
         }
         
-    }
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
     }
     
     @IBAction func backBtn (_ sender: UIBarButtonItem) {
@@ -141,7 +141,19 @@ func submitTestDriveDetails (){
             print("JSON: \(json)")
             let status = json["status"].stringValue
             if (status == WebUrl.SUCCESS_CODE){
-                 self.view.makeToast("Your Drive Has Been Saved ")
+                let alert = UIAlertController(title: "Alert", message: "Your Drive Has Been Saved ", preferredStyle: UIAlertControllerStyle.alert)
+                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { action in
+                    switch action.style{
+                    case .default:
+                        self.dismiss(animated: true, completion: nil)
+                    case .cancel:
+                        print("cancel")
+                    case .destructive:
+                        print("destructive")
+                        
+                    }}))
+                self.present(alert, animated: true, completion: nil)
+                 //self.view.makeToast("Your Drive Has Been Saved ")
                 }
                 /***************** Network Error *****************/
             case .failure (let error):

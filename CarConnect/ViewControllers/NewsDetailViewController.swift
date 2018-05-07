@@ -31,13 +31,16 @@ class NewsDetailViewController: UIViewController {
         print(newsImage+" Titel  - > " + newsTitle + "Desc ->  "+newsDesc)
 
     }
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
     
     @IBAction func backBtn (_ sender: UIBarButtonItem) {
-        self.dismiss(animated: false, completion: nil)
+        self.dismiss(animated: true, completion: nil)
     }
 
 }

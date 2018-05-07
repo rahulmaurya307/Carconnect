@@ -9,6 +9,9 @@ class LoanCalculateViewController: UIViewController {
         super.viewDidLoad()
         self.sideMenuController()?.sideMenu?.delegate = MySideMenu()
     }
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
     
    
     @IBAction func btnCalculator(_ sender: Any) {

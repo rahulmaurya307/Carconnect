@@ -26,9 +26,13 @@ class MyCarsViewController: UIViewController,UITableViewDelegate, UITableViewDat
         getMyCarList()
         self.sideMenuController()?.sideMenu?.delegate = MySideMenu()
     }
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
     func noData(){
         if tableView2.visibleCells.isEmpty{
             noItemsView.isHidden = false
+            tableView2.separatorStyle = .none
         }else {
             noItemsView.isHidden = true
         }
@@ -45,7 +49,7 @@ func getMyCarList(){
     
 //Alamofire Request
         Alamofire.request(WebUrl.MY_CAR_URL+"?token="+UserDefaults.standard.string(forKey: "token")!, method: .post,parameters: parameters, encoding: JSONEncoding.default).validate().responseJSON { response in
-            print("NewCarJsonResponse: \(response)")
+            //print("NewCarJsonResponse: \(response)")
 
 /*****************Response Success *****************/
             switch response.result {
@@ -54,8 +58,14 @@ func getMyCarList(){
             self.view.hideToastActivity()
             print("JSON: \(json)")
             let status = json["status"].stringValue
+            let data = json["data"].array
+             print("dataCount : \(data?.count)")
+            if (data?.count == 0){
+                self.noData()
+            }
             if (status == WebUrl.SUCCESS_CODE){
                 let data = json["data"].array
+               
                 
                 for i in data! {
                     let myCarList = JSON(i)// Read Json Object
@@ -88,7 +98,7 @@ func getMyCarList(){
                                     }
                     
                     self.tableView2.reloadData()
-                    self.noData()
+                    
 
                 }
             }

@@ -73,7 +73,7 @@
     txnParam.udf10 = @"NA";
     txnParam.hashValue = [self getHashForPaymentParams:txnParam];
    
-    [PlugNPlay setDisableCompletionScreen:NO];
+    [PlugNPlay setDisableCompletionScreen:YES];
     [PlugNPlay setDisableCards:NO];
     [PlugNPlay setDisableNetbanking:NO];
     [PlugNPlay setDisableWallet:YES];

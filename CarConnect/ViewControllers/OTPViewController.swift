@@ -67,6 +67,9 @@ class OTPViewController: UIViewController,UITextFieldDelegate {
          VerifyOTP()
         }
     }
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
 
     func generateOtp(){
         self.view.makeToastActivity(.center)

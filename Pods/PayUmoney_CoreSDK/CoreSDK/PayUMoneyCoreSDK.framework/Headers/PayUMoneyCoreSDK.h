@@ -15,6 +15,8 @@
 #import "PUMUIConfig.h"
 #import "PUMUtils.h"
 #import "PUMHelperClass.h"
+#import "PUMTextField.h"
+#import "PUMLogEvents.h"
 
 
 #define SDK_Default_COLOR UIColorFromRGB([PUMUIConfig intFromHexString:defaultLinkTextColor])
@@ -77,6 +79,21 @@ typedef void (^PUMPaymentCompletionBlock)(NSDictionary *response ,NSError *error
 
 - (void)getNetBankingStatusAPIWithCompletionBlock:(PUMRawJSONCompletionBlock)completionBlock;
 
+- (void)fetchUserDataAPIWithCompletionBlock:(PUMRawJSONCompletionBlock)completionBlock;
+
+- (void)sendPaymentOTPforMobileOrEmail:(NSString *) mobileOrEmail APIWithCompletionBlock:(PUMRawJSONCompletionBlock)completionBlock;
+
+- (void)verifyOTPOrPassword:(NSString *) otpOrPassword forMobileOrEmail:(NSString *) mobileOrEmail APIWithCompletionBlock:(PUMRawJSONCompletionBlock)completionBlock;
+
+- (void)getMultipleBinDetailsAPI:(NSArray *)arrCardBin
+             withCompletionBlock:(PUMRawJSONCompletionBlock)completionBlock;
+
+/**
+ This API is used to mark txn as user cancelled, when user decides to cancel the transaction
+
+ @param completionBlock PUMRawJSONCompletionBlock
+ */
+- (void)markTxnCancelWithCompletionBlock:(PUMRawJSONCompletionBlock)completionBlock;
 //
 
 + (BOOL)destroy;

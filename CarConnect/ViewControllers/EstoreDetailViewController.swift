@@ -86,7 +86,9 @@ class EstoreDetailViewController: UIViewController {
             updateCartAction();
         }
     }
-    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
     @IBAction func btnCart(_ sender: Any) {
         let cartVC = self.storyboard?.instantiateViewController(withIdentifier: "MyCartViewController") as! MyCartViewController
         self.present(cartVC, animated: true, completion: nil)
@@ -112,18 +114,16 @@ class EstoreDetailViewController: UIViewController {
             if (status == WebUrl.SUCCESS_CODE){
                 self.view.makeToast("Succesfully Add to Cart.")
                 self.getMyCartListCount()
-               
             }
                     
             //Network Error
             case .failure (let error):
                 self.view.makeToast("Network Error")
             }
-            
-            }
+        }
            
     }
-    
+
     func updateCartAction(){
         self.view.makeToastActivity(.center)
         var myCart : Int? = Int(cart!)

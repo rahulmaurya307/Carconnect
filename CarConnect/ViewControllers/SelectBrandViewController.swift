@@ -28,6 +28,9 @@ class SelectBrandViewController: UIViewController,UITableViewDelegate, UITableVi
         selectcar1()
         self.sideMenuController()?.sideMenu?.delegate = MySideMenu()
     }
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
     
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

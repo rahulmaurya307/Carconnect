@@ -23,6 +23,7 @@ class HomeViewController: UIViewController {
     @IBOutlet weak var HomeScrollView: UIScrollView!
     var imageArray = [UIImage]()
     var skipLog : String!
+    var variantName : String?
     
     
     
@@ -30,9 +31,15 @@ class HomeViewController: UIViewController {
         super.viewDidLoad()
         //getProfile()
         getHomeDetail()
-       // imageArray = [#imageLiteral(resourceName: "car5"),#imageLiteral(resourceName: "Car2"),#imageLiteral(resourceName: "Car3"),#imageLiteral(resourceName: "car5"),]
-       
+        // imageArray = [#imageLiteral(resourceName: "car5"),#imageLiteral(resourceName: "Car2"),#imageLiteral(resourceName: "Car3"),#imageLiteral(resourceName: "car5"),]
         
+        
+        
+        
+    }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
     }
     @IBAction func btnMyRewards(_ sender: Any) {
         let MyRewardsVC = self.storyboard?.instantiateViewController(withIdentifier: "MyRewardsViewController") as! MyRewardsViewController
@@ -115,7 +122,7 @@ class HomeViewController: UIViewController {
         self.navigationController?.pushViewController(PopularUsedVC, animated: true)
     }
     
-
+    
     
     @IBAction func btnNewsHome(_ sender: Any) {
         let NewsVC = self.storyboard?.instantiateViewController(withIdentifier: "NewsViewController") as! NewsViewController
@@ -184,7 +191,7 @@ class HomeViewController: UIViewController {
                         var carId = i["carId"].stringValue
                         var updated_at = i["updated_at"].stringValue
                         var vehicleImages2 = i["vehicleImages2"].stringValue
-                        var variantName = i["variantName"].stringValue
+                        self.variantName = i["variantName"].stringValue
                         var kmsdriven = i["kmsdriven"].stringValue
                         usedBrandName = i["brandName"].stringValue
                         var color = i["color"].stringValue
@@ -206,27 +213,27 @@ class HomeViewController: UIViewController {
                         print(vehicleImages1)
                     }
                     if (image != nil){
-                    let myNewsImage = WebUrl.NEWS_IMAGE_URL+image
-                    let newsurl = URL(string: myNewsImage)!
-                    self.imgvwNews.af_setImage(withURL: newsurl)
+                        let myNewsImage = WebUrl.NEWS_IMAGE_URL+image
+                        let newsurl = URL(string: myNewsImage)!
+                        self.imgvwNews.af_setImage(withURL: newsurl)
                     }
                     self.lblNews.text = title
                     
                     if(modelImage != nil){
-                    let myNewCarsImage = WebUrl.NEW_CARS + modelImage
-                    let newCarurl = URL(string: myNewCarsImage)!
-                    self.imgvwNewCars.af_setImage(withURL: newCarurl)
+                        let myNewCarsImage = WebUrl.NEW_CARS + modelImage
+                        let newCarurl = URL(string: myNewCarsImage)!
+                        self.imgvwNewCars.af_setImage(withURL: newCarurl)
                     }
                     self.lblNewCar.text = brandName + "(" + modelName + ")"
                     
                     if (vehicleImages1 != nil){
-                    let myUsedCarsImage = WebUrl.USED_CAR_IMAGE_URL+vehicleImages1
-                    let url = URL(string: myUsedCarsImage)!
-                    self.imgvwUsedCar.af_setImage(withURL: url)
-                    self.lblUsedCar.text = brandName + "(" + modelName + ")"
+                        let myUsedCarsImage = WebUrl.USED_CAR_IMAGE_URL+vehicleImages1
+                        let url = URL(string: myUsedCarsImage)!
+                        self.imgvwUsedCar.af_setImage(withURL: url)
+                        self.lblUsedCar.text = usedModelName + " " + "(" + self.variantName! + ")"
                     }
                 }
-            }
+                }
                 
             //Network Error
             case .failure (let error):
@@ -236,7 +243,7 @@ class HomeViewController: UIViewController {
         }
     }
     
-   
+    
     
     @IBAction func HometoggleSideMenuBtn(_ sender: UIBarButtonItem) {
         toggleSideMenuView()
@@ -252,3 +259,4 @@ class HomeViewController: UIViewController {
     }
     
 }
+

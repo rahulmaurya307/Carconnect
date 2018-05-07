@@ -6,7 +6,10 @@ import Toast_Swift
 import AlamofireImage
 
 
-class MyRewardsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class MyRewardsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, SuccessRefProtocol {
+   
+    
+    @IBOutlet var btnReferralWalkin: UIButton!
     @IBOutlet var btnReferalprog: UIButton!
     @IBOutlet var btnReferalTrack: UIButton!
     @IBOutlet var btnPartner: UIButton!
@@ -17,6 +20,7 @@ class MyRewardsViewController: UIViewController, UITableViewDataSource, UITableV
     var ReferalHistoryList : [ReferalModel] = [ReferalModel]()
     var trackReferalsList : [TrackReferals] = [TrackReferals]()
     var dealerOfferList : [DealerModel] = [DealerModel]()
+    var walkinReferralList : [WalkinReferral] = [WalkinReferral]()
     
     @IBOutlet weak var view1: UIView!
     @IBOutlet weak var View3: UIView!
@@ -45,6 +49,29 @@ class MyRewardsViewController: UIViewController, UITableViewDataSource, UITableV
         
         
     }
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
+    func SuccessRefFunc(Success: String?) {
+        if (Success == "true"){
+            btnReferalprog.backgroundColor = UIColor.clear
+            btnReferalTrack.backgroundColor = UIColor(red: 82/255, green: 98/255, blue: 133/255, alpha: 1)
+            btnReferralWalkin.backgroundColor = UIColor.clear
+            isTrackClick = true
+            isReferralClick=false
+            ispartnerclick=false
+            isDealerClick=false
+            isWalkinClick = false
+            
+            print("Button Track CLick")
+            trackReferalsList.removeAll()
+            getTrackReferalList()
+            myTablview.reloadData()
+            
+        }
+        
+        
+    }
     func noData(){
         if myTablview.visibleCells.isEmpty{
             noItemsView.isHidden = false
@@ -53,11 +80,12 @@ class MyRewardsViewController: UIViewController, UITableViewDataSource, UITableV
         }
     }
     
-    //Partner Button Click
+    // Button Click Data
     var ispartnerclick=false
     var isDealerClick=false
     var isReferralClick=false
     var isTrackClick=false
+    var isWalkinClick=false
     
     @IBAction func btnpartner(_ sender: Any) {
         
@@ -69,6 +97,7 @@ class MyRewardsViewController: UIViewController, UITableViewDataSource, UITableV
         isDealerClick=false
         isReferralClick=false
         isTrackClick=false
+        isWalkinClick = false
 //
 //        lblDealer.isHidden = true
 //        lblPartner.isHidden = false
@@ -80,11 +109,13 @@ class MyRewardsViewController: UIViewController, UITableViewDataSource, UITableV
     //Dealer Button Click
     
     @IBAction func btnDealer(_ sender: Any) {
+        print("Button Dealer CLick")
         
         isDealerClick = true
         ispartnerclick=false
         isReferralClick=false
         isTrackClick=false
+        isWalkinClick = false
         
         dealerOfferList.removeAll()
         getDealerOffersList()
@@ -97,21 +128,23 @@ class MyRewardsViewController: UIViewController, UITableViewDataSource, UITableV
 //        lblPartner.isHidden = true
         
         
-        print("Button Dealer CLick")
+        
         myTablview.reloadData()
         
     }
-    //Referal Button Click
+    //Referal Programm Button Click
     
     @IBAction func btnReferral(_ sender: Any) {
         
         btnReferalprog.backgroundColor = UIColor(red: 82/255, green: 98/255, blue: 133/255, alpha: 1)
         btnReferalTrack.backgroundColor = UIColor.clear
+        btnReferralWalkin.backgroundColor = UIColor.clear
         
         isReferralClick = true
         isTrackClick=false
         ispartnerclick=false
         isDealerClick=false
+        isWalkinClick = false
         
         print("Button Referral CLick")
         ReferalHistoryList.removeAll()
@@ -124,16 +157,37 @@ class MyRewardsViewController: UIViewController, UITableViewDataSource, UITableV
         
         btnReferalprog.backgroundColor = UIColor.clear
         btnReferalTrack.backgroundColor = UIColor(red: 82/255, green: 98/255, blue: 133/255, alpha: 1)
+         btnReferralWalkin.backgroundColor = UIColor.clear
+        
         isTrackClick = true
         isReferralClick=false
         ispartnerclick=false
         isDealerClick=false
+        isWalkinClick = false
         
         print("Button Track CLick")
         trackReferalsList.removeAll()
         getTrackReferalList()
         myTablview.reloadData()
     }
+    
+    @IBAction func btnReferralWalkin(_ sender: Any) {
+        btnReferalprog.backgroundColor = UIColor.clear
+        btnReferalTrack.backgroundColor = UIColor.clear
+        btnReferralWalkin.backgroundColor = UIColor(red: 82/255, green: 98/255, blue: 133/255, alpha: 1)
+        isWalkinClick = true
+        isReferralClick = false
+        isTrackClick=false
+        ispartnerclick=false
+        isDealerClick=false
+        
+        print("Button btnReferralWalkin CLick")
+        ReferalHistoryList.removeAll()
+        walkinReferralList.removeAll()
+        getWalkinList()
+        myTablview.reloadData()
+    }
+    
     //Segment Click Start
     @IBAction func MySegmentAction(_ sender: Any) {
         switch (mySegmentControll.selectedSegmentIndex) {
@@ -148,10 +202,12 @@ class MyRewardsViewController: UIViewController, UITableViewDataSource, UITableV
             isDealerClick=false
             isReferralClick=false
             isTrackClick=false
+            isWalkinClick=false
             break
         case 1:
             btnReferalprog.backgroundColor = UIColor(red: 82/255, green: 98/255, blue: 133/255, alpha: 1)
             btnReferalTrack.backgroundColor = UIColor.clear
+            btnReferralWalkin.backgroundColor = UIColor.clear
             ReferalHistoryList.removeAll()
             getReferalProgramList()
             myTablview.reloadData()
@@ -164,6 +220,7 @@ class MyRewardsViewController: UIViewController, UITableViewDataSource, UITableV
             isTrackClick=false
             ispartnerclick=false
             isDealerClick=false
+            isWalkinClick=false
             
             break
             
@@ -171,6 +228,7 @@ class MyRewardsViewController: UIViewController, UITableViewDataSource, UITableV
             btnPartner.backgroundColor = UIColor.clear
             btnDealer.backgroundColor = UIColor(red: 82/255, green: 98/255, blue: 133/255, alpha: 1)
             dealerOfferList.removeAll()
+            walkinReferralList.removeAll()
             getDealerOffersList()
             myTablview.reloadData()
             
@@ -185,6 +243,7 @@ class MyRewardsViewController: UIViewController, UITableViewDataSource, UITableV
             ispartnerclick=false
             isReferralClick=false
             isTrackClick=false
+            isWalkinClick=false
             break
         default:
             break
@@ -219,6 +278,11 @@ class MyRewardsViewController: UIViewController, UITableViewDataSource, UITableV
                 print("My Ref isReferralClick:")
                 returnValue = ReferalHistoryList.count
             }
+            else if isWalkinClick
+            {
+                print("My Ref isWalkinClick:")
+                returnValue = walkinReferralList.count
+            }
             
         case 2:
             
@@ -230,6 +294,10 @@ class MyRewardsViewController: UIViewController, UITableViewDataSource, UITableV
             else if ispartnerclick
             {
                 returnValue = dealerOfferList.count
+            }
+            else if isWalkinClick
+            {
+                returnValue = walkinReferralList.count
             }
             
             // returnValue = arrayofcelldata4.count
@@ -256,6 +324,7 @@ class MyRewardsViewController: UIViewController, UITableViewDataSource, UITableV
             if isReferralClick
             {
                 let SecVC = self.storyboard?.instantiateViewController(withIdentifier: "ReferalViewController") as! ReferalViewController
+                SecVC.delegate = self
                 SecVC.referralTypeId = ReferalHistoryList[indexPath.row].id
                 self.present(SecVC, animated: true, completion: nil)
                 break
@@ -263,7 +332,6 @@ class MyRewardsViewController: UIViewController, UITableViewDataSource, UITableV
             }
             else if ispartnerclick {
                 break
-                
             }
             
         case 2:
@@ -294,6 +362,12 @@ class MyRewardsViewController: UIViewController, UITableViewDataSource, UITableV
             if isReferralClick
             {
                 return 75.0
+                
+            }
+            
+            if isWalkinClick
+            {
+                return 168.0
                 
             }
             return 75.0
@@ -418,30 +492,53 @@ class MyRewardsViewController: UIViewController, UITableViewDataSource, UITableV
                     print("Catch Block Error")
                 }
             }
+          if isWalkinClick
+            {
+                
+                print(isWalkinClick)
+                
+                
+                let cell2 = Bundle.main.loadNibNamed("WalkinReferalCell", owner: self, options: nil)?.first as! WalkinReferalCell
+                cell2.lbl1Track.text = walkinReferralList[indexPath.row].prospectName!
+                cell2.lbl3Track.text = walkinReferralList[indexPath.row].brand! + " " + "(" + walkinReferralList[indexPath.row].model! + ")"
+                cell2.lbl4Track.text = walkinReferralList[indexPath.row].prospectMobile!
+                cell2.lbl5Track.text = walkinReferralList[indexPath.row].referralStatus!
+                return cell2
+            }
             
         case 2:
             if isDealerClick
             {
+                do{
                 let cell2 = Bundle.main.loadNibNamed("DealerCell", owner: self, options: nil)?.first as! DealerCell
-                
+
                 let url = URL(string: dealerOfferList[indexPath.row].offerImage)!
                 cell2.imageDealerCell.af_setImage(withURL: url)
                 
                 cell2.lbl1DealerCell.text = dealerOfferList[indexPath.row].offerName
                 cell2.lbl2DealerCell.text = dealerOfferList[indexPath.row].offerDescription
                 return cell2
+                }catch{
+                    print("Error Dealer")
+                }
             }
             
             if ispartnerclick
             {
-                let cell2 = Bundle.main.loadNibNamed("DealerCell", owner: self, options: nil)?.first as! DealerCell
-                
-                let url = URL(string: dealerOfferList[indexPath.row].offerImage)!
-                cell2.imageDealerCell.af_setImage(withURL: url)
-                
-                cell2.lbl1DealerCell.text = dealerOfferList[indexPath.row].offerName
-                cell2.lbl2DealerCell.text = dealerOfferList[indexPath.row].offerDescription
-                return cell2
+                do{
+                    let cell2 = Bundle.main.loadNibNamed("DealerCell", owner: self, options: nil)?.first as! DealerCell
+                    
+                    let url = URL(string: dealerOfferList[indexPath.row].offerImage)!
+                    cell2.imageDealerCell.af_setImage(withURL: url)
+                    
+                    cell2.lbl1DealerCell.text = dealerOfferList[indexPath.row].offerName
+                    cell2.lbl2DealerCell.text = dealerOfferList[indexPath.row].offerDescription
+                    return cell2
+                }
+                catch {
+                    
+                    print("Catch Block Error")
+                }
             }
             
             
@@ -452,8 +549,6 @@ class MyRewardsViewController: UIViewController, UITableViewDataSource, UITableV
         return cell2
     }
     /****************All Cell Creating End**************/////////////////
-    
-    
     
     
     ///////////*****************Function Start to Get Total Points *****************///////////
@@ -702,6 +797,85 @@ class MyRewardsViewController: UIViewController, UITableViewDataSource, UITableV
     
     ///////////*****************Function End to Get Track Referal *****************/
     
+    /*****************Function Start to Get Walkin Referal *****************///////////
+    
+    func getWalkinList(){
+        self.view.makeToastActivity(.center)
+        let token : String = UserDefaults.standard.string(forKey: "token")!
+        let loyaltyId : String = UserDefaults.standard.string(forKey: "loyaltyId")!
+        
+        // Parameters
+        let parameters: [String: Any] = ["loyaltyId":loyaltyId]
+        
+        //Alamofire Request
+        Alamofire.request(WebUrl.REFERRAL_WALKIN_HISTORY_URL+"?token="+UserDefaults.standard.string(forKey: "token")!, method: .post,parameters: parameters, encoding: JSONEncoding.default).validate().responseJSON { response in
+            //Response Success
+            switch response.result {
+            case .success (let value):let json = JSON(value)
+            self.view.hideToastActivity()
+            print("Track Referal JSON: \(json)")
+            let status = json["status"].stringValue
+            if (status == WebUrl.SUCCESS_CODE){
+                let data = json["data"].array
+                
+                for i in data! {
+                    let myTrackRefList = JSON(i)
+                    let statusReferralList = myTrackRefList["statusReferralList"].array
+                    
+                    for dataModel in statusReferralList! {
+                        let referralAward = dataModel["referralAward"].stringValue
+                        let invoiceNumber = dataModel["invoiceNumber"].stringValue
+                        let brandName = dataModel["brandName"].stringValue
+                        let prospectName = dataModel["prospectName"].stringValue
+                        let excetutiveName = dataModel["excetutiveName"].stringValue
+                        let brand = dataModel["brand"].stringValue
+                        
+                        let prospectMobile = dataModel["prospectMobile"].stringValue
+                        let updatedType = dataModel["updatedType"].stringValue
+                        let id = dataModel["id"].stringValue
+                        let bookingNumber = dataModel["bookingNumber"].stringValue
+                        
+                        let reservationId = dataModel["reservationId"].stringValue
+                        let carDeliveryStatus = dataModel["carDeliveryStatus"].stringValue
+                        let outletCode = dataModel["outletCode"].stringValue
+                        let comment = dataModel["comment"].stringValue
+                        
+                        let dealerCode = dataModel["dealerCode"].stringValue
+                        let updated_at = dataModel["updated_at"].stringValue
+                        let department = dataModel["department"].stringValue
+                        let chasNumber = dataModel["chasNumber"].stringValue
+                        
+                        let model = dataModel["model"].stringValue
+                        let executiveCode = dataModel["executiveCode"].stringValue
+                        let status = dataModel["status"].stringValue
+                        let updatedBy = dataModel["updatedBy"].stringValue
+                        
+                        let created_at = dataModel["created_at"].stringValue
+                        let referralStatus = dataModel["referralStatus"].stringValue
+                        let cardNo = dataModel["cardNo"].stringValue
+                        let modelName = dataModel["modelName"].stringValue
+                        
+                        print("prospectName : \(prospectName)")
+                        
+                        self.walkinReferralList.append(WalkinReferral(referralAward: referralAward, invoiceNumber: invoiceNumber, brandName: brandName, prospectName: prospectName, excetutiveName: excetutiveName, brand: brand, prospectMobile: prospectMobile, updatedType: updatedType, id: id, bookingNumber: bookingNumber, reservationId: reservationId, carDeliveryStatus: carDeliveryStatus, outletCode: outletCode, comment: comment, dealerCode: dealerCode, updated_at: updated_at, department: department, chasNumber: chasNumber, model: model, executiveCode: executiveCode, status: status, updatedBy: updatedBy, created_at: created_at, referralStatus: referralStatus, cardNo: cardNo, modelName: modelName))
+ 
+                    }
+                    
+                }
+                self.myTablview.reloadData()
+                self.noData()
+                }
+                
+            //Network Error
+            case .failure (let error):
+                self.view.hideToastActivity()
+                self.view.makeToast("Network Error")
+            }
+        }
+    }
+    
+    ///////////*****************Function End to Get Walkin Referal *****************/
+    
     
     /*****************Function Start to Get Dealer Offers List *****************///////////
     
@@ -810,12 +984,5 @@ class MyRewardsViewController: UIViewController, UITableViewDataSource, UITableV
     ///////////*****************Function End to Get Partner Offers List*****************/
     
     
-    
-    
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        
-    }
 }
 

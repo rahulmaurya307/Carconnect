@@ -24,6 +24,9 @@ class SecondViewController: UIViewController, ENSideMenuDelegate,UITextFieldDele
         print(mobileNumber)
         
     }
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
     
     func hideKeyboard()
     {
@@ -34,7 +37,7 @@ class SecondViewController: UIViewController, ENSideMenuDelegate,UITextFieldDele
         view.addGestureRecognizer(tap)
     }
     
-    func dismissKeyboard()
+    @objc func dismissKeyboard()
     {
         view.endEditing(true)
     }

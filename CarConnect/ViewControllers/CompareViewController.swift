@@ -67,7 +67,9 @@ class CompareViewController: UIViewController,UITableViewDelegate, UITableViewDa
     override func viewWillAppear(_ animated: Bool) {
          self.sideMenuController()?.sideMenu?.delegate = MySideMenu()
     }
-    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
 

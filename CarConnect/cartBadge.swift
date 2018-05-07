@@ -60,7 +60,7 @@ extension UIBarButtonItem {
         }
     }
     
-    func removeBadge() {
+    @objc func removeBadge() {
         badgeLayer?.removeFromSuperlayer()
     }
 }

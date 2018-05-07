@@ -37,7 +37,9 @@ class BrandHelplineViewController: UIViewController,UITableViewDelegate, UITable
         self.sideMenuController()?.sideMenu?.delegate = MySideMenu()
         getBrandHelplineList()
     }
-    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
   
     func noData(){
         tableView2.separatorStyle = .none

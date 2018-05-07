@@ -20,6 +20,9 @@ class MyCartViewController: UIViewController, UITableViewDataSource, CartDelegat
         }
         print(update+"   "+cartId+"    "+quantity)
     }
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
     
    
     @IBOutlet var myTableView: UITableView!

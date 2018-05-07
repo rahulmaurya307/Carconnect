@@ -24,17 +24,32 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate, UITableV
     @IBOutlet var lblOrderID: UILabel!
     override func viewDidLoad() {
         super.viewDidLoad()
+        let token : String = UserDefaults.standard.string(forKey: "token")!
+        let loyltyId : String = UserDefaults.standard.string(forKey: "loyaltyId")!
+        print("token : \(token)")
+         print("loyltyId : \(loyltyId)")
+        print("orderID : \(orderID)")
         getOrderDetail()
         lblOrderID.text = "Order ID : " + orderID
     }
+   
     func UITableView_Auto_Height()
     {
         if(self.myTableView.contentSize.height < self.myTableView.frame.height){
             cnstrntTableView.constant = self.myTableView.contentSize.height
+            
         }
     }
     override func viewDidAppear (_ animated: Bool) {
-        UITableView_Auto_Height();
+        print("viewDidAppear")
+        //UITableView_Auto_Height()
+    }
+    override func viewDidDisappear(_ animated: Bool) {
+        print("viewDidDisappear")
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        print("viewWillAppear")
+
     }
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
@@ -126,11 +141,15 @@ class OrderDetailViewController: UIViewController, UITableViewDelegate, UITableV
                     self.lblTotalPaidAmounts.text = "₹ " + String(self.paidamount)
                     self.lblTotalEarnedAmounts.text = String(self.earnPoint)
                     
-                    self.myTableView.reloadData()
+                    
                 }
+               
+                self.myTableView.reloadData()
+                let message = json["message"].stringValue
+                self.UITableView_Auto_Height()
                 
                 }
-                
+            
                 /***************** Network Error *****************/
             case .failure (let error):
                 self.view.hideToastActivity()

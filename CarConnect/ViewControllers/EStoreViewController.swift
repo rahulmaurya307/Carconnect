@@ -22,6 +22,7 @@ import Toast_Swift
     @IBOutlet weak var myTablview: UITableView!
     @IBOutlet weak var mySegmentControll: UISegmentedControl!
      var dealerProductList : [DealerProductsModel] = [DealerProductsModel]()
+   
     var orderSummaryList : [OrderSummaryModel] = [OrderSummaryModel]()
     var CouponList : [CouponModel] = [CouponModel]()
     var VoucherList : [VoucherModel] = [VoucherModel]()
@@ -69,6 +70,10 @@ import Toast_Swift
             UserDefaults.standard.removeObject(forKey: "order")
         }
         
+    }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
     }
     
     func noData(){

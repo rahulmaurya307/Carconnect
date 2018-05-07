@@ -35,7 +35,8 @@ class OrderReciptViewController: UIViewController, UITableViewDelegate, UITableV
     var awardBalWithRedeem : Int!
     
     var earnPoint : Int! = 0
-    var totalamount : Int! = 0
+    var totalAmountArry : [Int?] = []
+    var totalamount : Int? = 0
     var vouchervalue : Int! = 0
     var couponvalue : Int! = 0
     var pointapplied : Int! = 0
@@ -52,6 +53,7 @@ class OrderReciptViewController: UIViewController, UITableViewDelegate, UITableV
         
         lblOrderID.text = "Your Order ID is : " + UserDefaults.standard.string(forKey: "orderId")!
     }
+   
     
     func UITableView_Auto_Height()
     {
@@ -99,7 +101,7 @@ class OrderReciptViewController: UIViewController, UITableViewDelegate, UITableV
             let data2 = i.array![0]
             let totalTax = data2["totalTax"].stringValue
             let loyaltyAssociateId = data2["loyaltyAssociateId"].stringValue
-            let totalAmount = data2["totalAmount"].int
+            let totalAmount = data2["totalAmount"].intValue
             let redeemPoints = data2["redeemPoints"].intValue
             let loyaltyUserTierType = data2["loyaltyUserTierType"].stringValue
             let loyaltyId = data2["loyaltyId"].stringValue
@@ -144,7 +146,10 @@ class OrderReciptViewController: UIViewController, UITableViewDelegate, UITableV
                 let redeemPoint = j["redeemPoint"].intValue
                 let voucherId = j["voucherId"].stringValue
                 
-                self.totalamount = totalAmount! + self.totalamount
+                
+                //self.totalAmountArry.append(totalAmount)
+                
+                self.totalamount = totalAmount + self.totalamount!
                 self.pointapplied = self.pointapplied + redeemPoint
                 self.paidamount = self.paidamount +  balanceWithRedeem
                 self.earnPoint = awardBalanceWithRedeem + self.earnPoint
@@ -152,7 +157,8 @@ class OrderReciptViewController: UIViewController, UITableViewDelegate, UITableV
                 print("balanceWithRedeem : \(balanceWithRedeem)")
             }
         }
-        self.lblTotalAmount.text = "₹ " + String(self.totalamount)
+        self.lblTotalAmount.text = "₹ " + String(self.paidamount)
+        //self.lblTotalAmount.text = "₹ " + String(self.totalamount)
         self.lblPointsAppliedAmount.text = String(self.pointapplied)
         self.lblTotalPaidAmounts.text = "₹ " + String(self.paidamount)
         self.lblTotalEarnedAmounts.text = String(self.earnPoint)

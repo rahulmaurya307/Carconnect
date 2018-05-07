@@ -25,16 +25,17 @@ class WebUrl {
 //
     
     //************************** BASEURL URL **************************
-    private static var BASEURL = "http://car-connect.test.aritron.in/api/user/"
+     private static var BASEURL = "http://globe-car.aritron.in/api/user/"
+   // private static var BASEURL = "http://car-connect.test.aritron.in/api/user/"
     
     //************************** IMAGE URLS **************************
-    public static var  IMAGE_URL = "http://car-connect.test.aritron.in/images/thumbnail/"
+    public static var  IMAGE_URL = "http://globe-car.aritron.in/images/thumbnail/"
 
-    public static var IMAGE_URL_LARGE = "http://car-connect.test.aritron.in/images/thumbnail/"
+    public static var IMAGE_URL_LARGE = "http://globe-car.aritron.in/images/thumbnail/"
 
-    public static var  ECOM_IMAGE_URL = "http://ecom.test.aritron.in/images/thumbnail/"
+    public static var  ECOM_IMAGE_URL = "http://globe-car.aritron.in/images/thumbnail/"
 
-    public static var  ECOM_IMAGE_URL_LARGE = "http://ecom.test.aritron.in/images/large/"
+    public static var  ECOM_IMAGE_URL_LARGE = "http://globe-ecom.aritron.in/images/large/"
 
     
     
@@ -46,7 +47,7 @@ class WebUrl {
     
     public static var  HELPLINE_IMAGE_URL = IMAGE_URL + "brandhelpline/"
     
-    public static var  OFFERS_IMAGE_URL = "http://loyalty.dev.aritron.in/images/large/offer/"
+    public static var  OFFERS_IMAGE_URL = "http://globe-ecom.aritron.in/images/large/offer/"
     
     public static var  PRODUCT_IMAGE_URL = ECOM_IMAGE_URL_LARGE + "product/"
     
@@ -96,6 +97,8 @@ class WebUrl {
     public static var  ADD_REFERRAL_URL = BASEURL + "addreferral"
     
     public static var  REFERRAL_HISTORY_URL = BASEURL + "referralhistory"
+    
+    public static var  REFERRAL_WALKIN_HISTORY_URL = BASEURL + "cardStatusReferralList"
     
     public static var  DEALER_OFFERS_URL = BASEURL + "availableOffers"
     

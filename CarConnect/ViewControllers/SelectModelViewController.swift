@@ -34,6 +34,9 @@ class SelectModelViewController: UIViewController,UITableViewDelegate, UITableVi
                              CellDataSelectModel(cell2 : 1 , text1 : "Car Model 2")]
    
     }
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
     
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

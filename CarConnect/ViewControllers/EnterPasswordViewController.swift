@@ -18,6 +18,9 @@ class EnterPasswordViewController: UIViewController,UITextFieldDelegate {
         
       
     }
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {   //delegate method
         txtFldConfirmPass.resignFirstResponder()
         textFldEnterPass.resignFirstResponder()

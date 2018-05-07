@@ -10,4 +10,5 @@ target 'CarConnect' do
 	pod 'Toast-Swift', '~> 2.0.0’
 	pod 'PayUmoney_PnP'
 	pod 'Kingfisher', '~> 4.0'
+	pod "ImageSlideshow/Alamofire"
 end

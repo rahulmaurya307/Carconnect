@@ -28,12 +28,18 @@ class LoanAssistanceViewController: UIViewController, UITextFieldDelegate {
         
         self.sideMenuController()?.sideMenu?.delegate = MySideMenu()
     }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
+    
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {   //delegate method
         txtFldCompanyName.resignFirstResponder()
         txtFldAnnualSalary.resignFirstResponder()
        
         return true
     }
+    
     
             var val = 0
             var jobTitle : String!

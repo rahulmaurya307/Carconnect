@@ -54,6 +54,7 @@ class BrandDetailViewController: UIViewController,UITableViewDelegate, UITableVi
         tableView2.backgroundView = noItemsView
         noItemsView.isHidden = true
     }
+   
     
    
     func noData(){

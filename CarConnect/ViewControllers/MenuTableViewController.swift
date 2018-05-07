@@ -55,6 +55,9 @@ class MenuTableViewController: UIViewController, UITableViewDelegate, UITableVie
         
         
     }
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
     
     func getProfile(){
         self.view.makeToastActivity(.center)

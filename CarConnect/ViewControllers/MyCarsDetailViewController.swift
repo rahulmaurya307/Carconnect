@@ -30,6 +30,7 @@ UINavigationControllerDelegate,UIActionSheetDelegate, UIImagePickerControllerDel
     var selectState = [String?]()
     
 
+    @IBOutlet var btnViewSubmt: UIView!
     
 @IBOutlet var SegmentCarDetail: UISegmentedControl!
     var searchController: UISearchController?
@@ -63,7 +64,8 @@ UINavigationControllerDelegate,UIActionSheetDelegate, UIImagePickerControllerDel
     @IBOutlet var txtFldExpectedPrice: UITextField!
     @IBOutlet var txtFldColor: UITextField!
     @IBOutlet var txtFldOwner: UITextField!
-    @IBOutlet var txtvwSellerComment: UITextField!
+    @IBOutlet var txtvwSellerComment:UITextView!
+    @IBOutlet var viewselcomment: UIView!
     var colorList : [ColorModel] = [ColorModel]()
     var colorArray = [String]()
 
@@ -82,9 +84,20 @@ UINavigationControllerDelegate,UIActionSheetDelegate, UIImagePickerControllerDel
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        print("varientNAme :\(varientNAme)")
+        
+        btnViewSubmt.layer.cornerRadius = 3
+        viewselcomment.layer.borderWidth = 0.5
+        //viewselcomment.layer.borderColor =
+        viewselcomment.layer.cornerRadius = 2
+        
         imgvwCam1.makeCircular()
+        imgvwCam1.layer.borderWidth = 1
         imagevwCam2.makeCircular()
+        imagevwCam2.layer.borderWidth = 1
         imagevwCam3.makeCircular()
+        imagevwCam3.layer.borderWidth = 1
+        
         getLocationList()
         
         txtFldServiceType.delegate = self
@@ -145,6 +158,12 @@ UINavigationControllerDelegate,UIActionSheetDelegate, UIImagePickerControllerDel
         doneButton()
       
     }
+    
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
+    
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {   //delegate method
         txtFldServiceType.resignFirstResponder()
         textvwSelectCity.resignFirstResponder()
@@ -659,16 +678,16 @@ func doneButton(){
     {
         let chosenImage : UIImage = info[UIImagePickerControllerOriginalImage] as! UIImage //1
         if(i == 1){
-            imgvwCam1.contentMode = .scaleAspectFit
+            //imgvwCam1.contentMode = .scaleAspectFit
             imgvwCam1.image = chosenImage
             selectedImages = chosenImage
         }else if(i == 2){
-            imagevwCam2.contentMode = .scaleAspectFit
-            imagevwCam2.image = chosenImage
+           // imagevwCam3.contentMode = .scaleAspectFit
+            imagevwCam3.image = chosenImage
             selectedImages = chosenImage
         }else if(i == 3){
-            imagevwCam3.contentMode = .scaleAspectFit
-            imagevwCam3.image = chosenImage
+            //imagevwCam2.contentMode = .scaleAspectFit
+            imagevwCam2.image = chosenImage
             selectedImages = chosenImage
         }
         dismiss(animated:true, completion: nil)
@@ -712,12 +731,12 @@ func doneButton(){
         print("MyImage: \(image0.size)")
         
         let image1 : UIImage
-        image1 = resizeImage(image: imagevwCam2.image!, targetSize: CGSize(width: 400, height: 400))
+        image1 = resizeImage(image: imagevwCam3.image!, targetSize: CGSize(width: 400, height: 400))
         let imgData1 = UIImageJPEGRepresentation(image1, 0.2)!
         print("MyImage: \(image1.size)")
         
         let image2 : UIImage
-        image2 = resizeImage(image: imagevwCam3.image!, targetSize: CGSize(width: 400, height: 400))
+        image2 = resizeImage(image: imagevwCam2.image!, targetSize: CGSize(width: 400, height: 400))
         let imgData2 = UIImageJPEGRepresentation(image2, 0.2)!
         print("MyImage: \(image2.size)")
         
@@ -750,11 +769,19 @@ func doneButton(){
                 
                 upload.responseJSON { response in
                     print(response.result.value)
-                    let alert = UIAlertController(title: "Alert", message: "Your Request Successfully Uploaded", preferredStyle: UIAlertControllerStyle.alert)
-                    alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
-                    self.present(alert, animated: true, completion: nil)
-                    self.dismiss(animated: true, completion: nil)
                 }
+                let alert = UIAlertController(title: "Alert", message: "Your Request Has Been Saved ", preferredStyle: UIAlertControllerStyle.alert)
+                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { action in
+                    switch action.style{
+                    case .default:
+                        self.dismiss(animated: true, completion: nil)
+                    case .cancel:
+                        print("cancel")
+                    case .destructive:
+                        print("destructive")
+                        
+                    }}))
+                self.present(alert, animated: true, completion: nil)
                 
                 
             case .failure(let encodingError):
@@ -767,6 +794,7 @@ func doneButton(){
     func getLocationList(){
         self.view.makeToastActivity(.center)
         let token : String = UserDefaults.standard.string(forKey: "token")!
+        print("Token : \(token)")
         
         // Parameters
         let parameters: [String: Any] = ["":""]

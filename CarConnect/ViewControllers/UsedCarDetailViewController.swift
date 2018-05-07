@@ -33,9 +33,10 @@ class UsedCarDetailViewController: UIViewController {
         getUSedCarDetail()
 
     }
+  
 
     @IBAction func BackBtn(_ sender: Any) {
-        self.dismiss(animated:false, completion: nil)
+        self.dismiss(animated:true, completion: nil)
     }
     
     @IBAction func btnInterestSent(_ sender: Any) {
@@ -120,7 +121,7 @@ class UsedCarDetailViewController: UIViewController {
                         
                     
                         self.lblModelName.text = modelName + "( " + variantName + ")"
-                        self.lblPrice.text = "₹ " + price + " Lakh"
+                        //self.lblPrice.text = "₹ " + price + " Lakh"
                         self.lblYear.text = modelYear
                         self.lblFuel.text = fuelType
                         self.lblLocation.text = state
@@ -136,6 +137,13 @@ class UsedCarDetailViewController: UIViewController {
                         
                         let url = URL(string: myimage1)!
                         self.imgcar.af_setImage(withURL: url)
+                        
+                        
+                        if(Int(price)! < 9999999){
+                            self.lblPrice.text = "₹ " + String(Double(price)! / 100000 ) + " Lakh"
+                        }else  if(Int(price)! > 9999999){
+                            self.lblPrice.text = "₹ " + String(Double(price)! / 1000000 ) + " Crore"
+                        }
                         
                         if (self.intrestStatus == "1") {
                             
@@ -165,7 +173,6 @@ class UsedCarDetailViewController: UIViewController {
     @objc func showInterest(){
         let token : String = UserDefaults.standard.string(forKey: "token")!
         let userId : String = UserDefaults.standard.string(forKey: "userId")!
-        
         
         
         // Parameters

@@ -22,8 +22,10 @@ class UsedCarViewController: UIViewController,UITableViewDelegate, UITableViewDa
         self.sideMenuController()?.sideMenu?.delegate = MySideMenu()
     }
    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
     func noData(){
-        tableView2.separatorStyle = .none
         if tableView2.visibleCells.isEmpty{
             noItemsView.isHidden = false
         }else {
@@ -45,14 +47,14 @@ func getUsedCarList() {
         case .success (let value):let json = JSON(value)
         self.view.hideToastActivity()
         print("JSON: \(json)")
+        let data = json["data"].array
+        if (data?.isEmpty)!
+        {
+            self.noData()
+        }
         let status = json["status"].stringValue
         if (status == WebUrl.SUCCESS_CODE){
             let data = json["data"].array
-            if (data?.isEmpty)!
-            {
-                
-                self.noData()
-            }
             
             for i in data! {
                 let usedcarList = i["usedcarList"].array // Read Json Object
@@ -119,7 +121,16 @@ func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> U
             cell2.UsecarImageView.af_setImage(withURL: url)
     
             cell2.CarNamelbl1.text = usedCarList[indexPath.row].modelName + "( " + usedCarList[indexPath.row].variantName + " )"
-            cell2.Rslbl2.text = "₹ " + usedCarList[indexPath.row].price + " Lakh"
+            //cell2.Rslbl2.text = "₹ " + usedCarList[indexPath.row].price + " Lakh"
+    
+    
+    if(Int(usedCarList[indexPath.row].price)! < 9999999){
+        cell2.Rslbl2.text  = "₹ " + String(Double(usedCarList[indexPath.row].price)! / 100000 ) + " Lakh"
+    }else  if(Int(usedCarList[indexPath.row].price)! > 9999999){
+        cell2.Rslbl2.text  = "₹ " + String(Double(usedCarList[indexPath.row].price)! / 1000000 ) + " Crore"
+    }
+    
+    
             cell2.Yearlbl3.text = usedCarList[indexPath.row].modelYear + "  |  " + totalKms + " kms"
             cell2.Placelbl5.text = usedCarList[indexPath.row].state
             return cell2

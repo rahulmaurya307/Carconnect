@@ -43,6 +43,7 @@ class BrandSpecificationViewController: UIViewController,UITableViewDelegate, UI
         imgvwCar.af_setImage(withURL: myImageurl!)
     
     }
+    
    
     @IBAction func BackBtn(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)

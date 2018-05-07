@@ -5,10 +5,16 @@ import SwiftyJSON
 import Toast_Swift
 
 
+protocol SuccessRefProtocol {
+    func SuccessRefFunc(Success : String?)
+}
+
 class ReferalViewController: UIViewController, UITextFieldDelegate {
+    
     
    // @IBOutlet weak var txtFldCmnt: UITextView!
     var referralTypeId : String!
+    var delegate : SuccessRefProtocol?
     @IBOutlet weak var txtFldCmnt: UITextField!
     @IBOutlet weak var txtFldRefEmail: UITextField!
     @IBOutlet weak var txtFldMobNo: UITextField!
@@ -25,6 +31,9 @@ class ReferalViewController: UIViewController, UITextFieldDelegate {
         txtFldRefName.delegate = self
         
     }
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {   //delegate method
         txtFldCmnt.resignFirstResponder()
         txtFldRefEmail.resignFirstResponder()
@@ -39,9 +48,6 @@ func borderColor(){
         self.viewBorder.layer.borderColor = UIColor.black.cgColor
     }
     
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-    }
     
     @IBAction func backBtn (_ sender: UIBarButtonItem) {
         self.dismiss(animated: true, completion: nil)
@@ -101,8 +107,20 @@ func borderColor(){
             print("JSON: \(json)")
             let status = json["status"].stringValue
             if (status == WebUrl.SUCCESS_CODE){
-              
-              self.view.makeToast("Sucessfully Added")
+                let alert = UIAlertController(title: "Alert", message: "Sucessfully Added", preferredStyle: UIAlertControllerStyle.alert)
+                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { action in
+                    switch action.style{
+                    case .default:
+                        self.delegate?.SuccessRefFunc(Success: "true")
+                        self.dismiss(animated: true, completion: nil)
+                    case .cancel:
+                        print("cancel")
+                    case .destructive:
+                        print("destructive")
+                        
+                    }}))
+                self.present(alert, animated: true, completion: nil)
+              //self.view.makeToast("Sucessfully Added")
             }
 //Network Error
             case .failure (let error):

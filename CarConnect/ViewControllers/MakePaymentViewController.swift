@@ -44,6 +44,7 @@ class MakePaymentViewController: UIViewController,UITableViewDataSource, Voucher
     var redeem : Int = 0
     var voucherVlue : Int = 0
     var balancePoint : Int = 0
+    var isVouchorApplied : Bool = false
     
  
     override func viewDidLoad() {
@@ -66,6 +67,8 @@ class MakePaymentViewController: UIViewController,UITableViewDataSource, Voucher
         lblAmount.text = "₹ " + String(cal)
         self.lbltotalPaybleAmount.text = "₹ " + String(cal)
     }
+   
+    
     func UITableView_Auto_Height()
     {
         if(self.myTableView.contentSize.height < self.myTableView.frame.height){
@@ -73,7 +76,7 @@ class MakePaymentViewController: UIViewController,UITableViewDataSource, Voucher
         }
     }
     override func viewDidAppear (_ animated: Bool) {
-        UITableView_Auto_Height();
+       UITableView_Auto_Height();
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -97,6 +100,7 @@ class MakePaymentViewController: UIViewController,UITableViewDataSource, Voucher
     func vaucherList(selectVoucherList: [String]) {
         voucherList = selectVoucherList
         getVoucherDetails()
+        self.isVouchorApplied = true
         print("Voucher List: \(voucherList)")
     }
     
@@ -107,6 +111,7 @@ class MakePaymentViewController: UIViewController,UITableViewDataSource, Voucher
         self.present(VVC, animated: true, completion: nil)
     }
     @IBAction func btnApply(_ sender: Any) {
+        self.isVouchorApplied = false
         if(txtFldEnterReedPoint.text?.isEmpty)!{
             self.view.makeToast("Please Enter Reedeem Points")
         }else{
@@ -135,13 +140,14 @@ class MakePaymentViewController: UIViewController,UITableViewDataSource, Voucher
         
     }
     
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
-    {
-        return 300;//Choose your custom row height
-    }
+//    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
+//    {
+//        return 300;//Choose your custom row height
+//    }
     
     
     func checkOutAction(){
+        balancePoint = 0
         self.view.makeToastActivity(.center)
         let token : String = UserDefaults.standard.string(forKey: "token")!
         let loyaltyId : String = UserDefaults.standard.string(forKey: "loyaltyId")!
@@ -272,6 +278,7 @@ class MakePaymentViewController: UIViewController,UITableViewDataSource, Voucher
     }
     
     func getVoucherDetails(){
+        balancePoint = 0
         self.view.makeToastActivity(.center)
         let token : String = UserDefaults.standard.string(forKey: "token")!
         let loyaltyId : String = UserDefaults.standard.string(forKey: "loyaltyId")!
@@ -363,6 +370,7 @@ class MakePaymentViewController: UIViewController,UITableViewDataSource, Voucher
                         }
                     }
                     
+                    if(self.isVouchorApplied == false){
                     if(self.redeem != 0){
                         self.contrntPointView.isActive = true
                         self.viewPoints.isHidden = false
@@ -376,8 +384,8 @@ class MakePaymentViewController: UIViewController,UITableViewDataSource, Voucher
                         alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
                         self.present(alert, animated: true, completion: nil)
                     }
-                        
-                    else if (self.voucherVlue != 0){
+                    }else{
+                    if (self.voucherVlue != 0){
                         self.constrntVoucherView.isActive = true
                         self.viewVoucher.isHidden = false
                         self.lblVoucher.text = String(self.voucherVlue)
@@ -391,6 +399,7 @@ class MakePaymentViewController: UIViewController,UITableViewDataSource, Voucher
                         alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
                         self.present(alert, animated: true, completion: nil)
                     }
+                }
                     self.txtFldEnterReedPoint.text = ""
                 }
                 
@@ -439,9 +448,18 @@ class MakePaymentViewController: UIViewController,UITableViewDataSource, Voucher
                     self.reservationId = i["reserveId"].stringValue
                     print("Reservation Id: \(self.reservationId)")
                 }
+                
+                
+//                Split Total Amount
+                var totalAmountText : String = self.lbltotalPaybleAmount.text!
+                let totalAmountTextArr = totalAmountText.components(separatedBy: " ")
+                let totalAmount = totalAmountTextArr[1]
+                
+                
                 let PaymentVc = self.storyboard?.instantiateViewController(withIdentifier: "Payment") as! Payment
                 PaymentVc.reservationId = self.reservationId
-                PaymentVc.toatlPaybleAmount = String(self.cal)
+                //PaymentVc.toatlPaybleAmount = String(self.balancePoint)
+                PaymentVc.toatlPaybleAmount = totalAmount
                 
                 self.present(PaymentVc, animated: true, completion: nil)
                 }

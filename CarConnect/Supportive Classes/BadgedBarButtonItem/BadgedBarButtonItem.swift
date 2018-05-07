@@ -222,6 +222,8 @@ fileprivate extension BadgedBarButtonItem {
         self.badgeLabel.layer.cornerRadius = (minHeight + horizontalPadding) / 2
     }
     
+    
+    
     internal override func removeBadge() {
         let duration = shouldAnimateBadge ? 0.08 : 0.0
         

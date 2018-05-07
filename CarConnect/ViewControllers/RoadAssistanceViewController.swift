@@ -26,6 +26,9 @@ class RoadAssistanceViewController: UIViewController,UITableViewDelegate, UITabl
         self.sideMenuController()?.sideMenu?.delegate = MySideMenu()
         getRoadAssistanceList()
     }
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
     
     
     func noData(){

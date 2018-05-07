@@ -9,6 +9,11 @@
 #ifndef PUMConstants_h
 #define PUMConstants_h
 
+typedef NS_ENUM(NSInteger, PUMEnvironment) {
+    PUMEnvironmentProduction = 0,
+    PUMEnvironmentTest = 1
+};
+
 // Issuer Collections
 #define     ISSUER_LASER                                        @"LASER"
 #define     ISSUER_DISCOVER                                     @"DISCOVER"
@@ -22,4 +27,10 @@
 #define     ISSUER_JCB                                          @"JCB"
 
 
+
+#define     CASH_CARD_SMALL                                     @"cashcard"
+#define     CASH_CARD_CAPITAL                                   @"CASHCARD"
+#define     CASH                                                @"CASH"
+
+#define     PAYMENT_MODE_CASH_CARD                                          @"cashcard"
 #endif /* PUMConstants_h */

@@ -25,6 +25,9 @@ class VoucherViewController: UIViewController,UITableViewDataSource,UITableViewD
         }
         
     }
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
     
     var voucherList : [VoucherModel] = [VoucherModel]()
     @IBOutlet var myTablview: UITableView!

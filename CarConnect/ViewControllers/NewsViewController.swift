@@ -48,6 +48,9 @@ class NewsViewController: UIViewController,UITableViewDelegate, UITableViewDataS
             noItemView.isHidden = true
         }
     }
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
    
     func getNewsList(){
         self.view.makeToastActivity(.center)

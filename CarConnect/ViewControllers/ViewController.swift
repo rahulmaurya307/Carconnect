@@ -38,6 +38,9 @@ class ViewController: UIViewController,UITextFieldDelegate {
             self.loginAction()
         }
     }
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
     
     override func viewWillDisappear(_ animated: Bool) {
         txtFldMobileNo.resignFirstResponder()
@@ -75,7 +78,7 @@ class ViewController: UIViewController,UITextFieldDelegate {
         view.addGestureRecognizer(tap)
     }
     
-    func dismissKeyboard()
+    @objc func dismissKeyboard()
     {
         view.endEditing(true)
     }
